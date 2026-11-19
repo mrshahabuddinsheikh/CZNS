@@ -1,0 +1,30 @@
+{
+  "name": "czns-mobile-store",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CZNS - Pakistani Mobile Store E-Commerce Platform (New & Used Phones)",
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspaces",
+    "dev:api": "npm run dev --workspace=apps/api",
+    "dev:web": "npm run dev --workspace=apps/web",
+    "build": "npm run build --workspaces",
+    "build:api": "npm run build --workspace=apps/api",
+    "build:web": "npm run build --workspace=apps/web",
+    "seed": "npm run seed --workspace=apps/api",
+    "start:api": "npm run start --workspace=apps/api",
+    "start:web": "npm run start --workspace=apps/web"
+  },
+  "keywords": [
+    "mobile-store",
+    "pakistan",
+    "ecommerce",
+    "iphone",
+    "samsung",
+    "czns"
+  ],
+  "author": "CZNS",
+  "license": "MIT"
+}
