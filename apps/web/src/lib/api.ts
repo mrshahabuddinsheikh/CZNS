@@ -1,6 +1,6 @@
 const API_BASE_URL = typeof window !== 'undefined'
   ? ''
-  : (process.env.INTERNAL_API_URL || `http://127.0.0.1:${process.env.INTERNAL_API_PORT || 4000}`);
+  : (process.env.INTERNAL_API_URL || `http://127.0.0.1:${process.env.INTERNAL_API_PORT || 4055}`);
 
 interface FetchOptions extends RequestInit {
   retries?: number;

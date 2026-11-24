@@ -72,7 +72,8 @@ if ($returnCode !== 0) {
     exit;
 }
 
-// 3. Touch Phusion Passenger restart.txt
+// 3. Kill any previous backend process and touch Phusion Passenger restart.txt
+exec('pkill -f "czns.newquettaautos.com/apps/api" 2>&1');
 $tmpDir = $baseDir . '/tmp';
 if (!is_dir($tmpDir)) {
     mkdir($tmpDir, 0755, true);

@@ -12,7 +12,7 @@ const path = require('path');
 const { spawn } = require('child_process');
 const fs = require('fs');
 
-const INTERNAL_API_PORT = process.env.INTERNAL_API_PORT || 4000;
+const INTERNAL_API_PORT = process.env.INTERNAL_API_PORT || 4055;
 const PORT = process.env.PORT || 3000;
 const HOST = process.env.HOST || '0.0.0.0';
 
