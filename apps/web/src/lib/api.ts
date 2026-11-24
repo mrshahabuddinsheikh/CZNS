@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? (typeof window !== 'undefined' ? '' : `http://127.0.0.1:${process.env.INTERNAL_API_PORT || 5000}`);
 
 interface FetchOptions extends RequestInit {
   retries?: number;

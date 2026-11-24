@@ -9,6 +9,7 @@ import { orderRoutes } from './routes/orders.js';
 import { settingsRoutes } from './routes/settings.js';
 import { marketingRoutes } from './routes/marketing.js';
 import { adminRoutes } from './routes/admin.js';
+import { assistantRoutes } from './routes/assistant.js';
 
 dotenv.config();
 
@@ -41,6 +42,7 @@ await fastify.register(orderRoutes);
 await fastify.register(settingsRoutes);
 await fastify.register(marketingRoutes);
 await fastify.register(adminRoutes);
+await fastify.register(assistantRoutes);
 
 // Server Listen
 const port = parseInt(process.env.PORT || '5000', 10);

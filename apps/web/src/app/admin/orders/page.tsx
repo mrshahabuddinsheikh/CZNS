@@ -54,7 +54,7 @@ function AdminOrdersContent() {
       if (desk !== 'all') q.set('desk', desk);
       if (query.trim()) q.set('search', query.trim());
 
-      const res = await fetch(`http://localhost:5000/api/v1/admin/orders?${q.toString()}`, {
+      const res = await fetch(`/api/v1/admin/orders?${q.toString()}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -92,7 +92,7 @@ function AdminOrdersContent() {
   // Update order status
   const updateStatus = async (orderId: string, status: string) => {
     const token = localStorage.getItem('czns_admin_token');
-    await fetch(`http://localhost:5000/api/v1/admin/orders/${orderId}/status`, {
+    await fetch(`/api/v1/admin/orders/${orderId}/status`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -106,7 +106,7 @@ function AdminOrdersContent() {
   // Verify or Reject Manual Payment TID (Anti-Fraud Desk)
   const handleVerifyPayment = async (orderId: string, action: 'approve' | 'reject') => {
     const token = localStorage.getItem('czns_admin_token');
-    await fetch(`http://localhost:5000/api/v1/admin/orders/${orderId}/verify-payment`, {
+    await fetch(`/api/v1/admin/orders/${orderId}/verify-payment`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -128,7 +128,7 @@ function AdminOrdersContent() {
     setDispatching(true);
     const token = localStorage.getItem('czns_admin_token');
     try {
-      const res = await fetch(`http://localhost:5000/api/v1/admin/orders/${dispatchOrder.id}/dispatch`, {
+      const res = await fetch(`/api/v1/admin/orders/${dispatchOrder.id}/dispatch`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

@@ -10,6 +10,7 @@ import {
   Package,
   CreditCard,
   Megaphone,
+  Palette,
   LogOut,
   ShieldAlert,
   Menu,
@@ -33,7 +34,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     }
 
     // Verify token with backend
-    fetch('http://localhost:5000/api/v1/admin/me', {
+    fetch('/api/v1/admin/me', {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => {
@@ -67,18 +68,19 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { label: 'Phones & Stock', href: '/admin/inventory', icon: Package },
     { label: 'COD & Gateways', href: '/admin/gateways', icon: CreditCard },
     { label: 'Marketing & CRM', href: '/admin/marketing', icon: Megaphone },
+    { label: 'Theme & Brand Colors', href: '/admin/theme', icon: Palette },
   ];
 
   return (
-    <div className="min-h-screen bg-czns-950 text-white flex flex-col md:flex-row">
+    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col md:flex-row">
       {/* Mobile Header */}
-      <div className="md:hidden flex items-center justify-between p-4 bg-czns-900 border-b border-czns-800">
+      <div className="md:hidden flex items-center justify-between p-4 bg-slate-900 text-white border-b border-slate-800">
         <div className="flex items-center gap-2">
-          <span className="font-black text-xl tracking-tight text-white">CZNS Admin</span>
+          <span className="font-black text-xl tracking-tight">CZNS Admin</span>
         </div>
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="p-1.5 rounded-lg bg-czns-800 text-white"
+          className="p-1.5 rounded-lg bg-slate-800 text-white"
         >
           {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
@@ -88,20 +90,20 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <aside
         className={`${
           mobileMenuOpen ? 'block' : 'hidden'
-        } md:block w-full md:w-64 bg-czns-900 border-r border-czns-800 flex flex-col justify-between shrink-0 p-4 md:sticky md:top-0 md:h-screen`}
+        } md:block w-full md:w-64 bg-slate-900 text-white flex flex-col justify-between shrink-0 p-4 md:sticky md:top-0 md:h-screen shadow-xl`}
       >
         <div className="space-y-6">
           {/* Brand */}
-          <div className="hidden md:flex items-center justify-between px-2">
+          <div className="hidden md:flex items-center justify-between px-2 pt-2">
             <Link href="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-brand-emerald flex items-center justify-center text-czns-950 font-black text-sm">
+              <div className="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center text-slate-950 font-black text-sm">
                 C
               </div>
               <div>
                 <span className="font-black text-lg tracking-tight text-white block -mb-1">
                   CZNS Control
                 </span>
-                <span className="text-[10px] text-brand-emerald font-semibold uppercase tracking-wider">
+                <span className="text-[10px] text-emerald-400 font-semibold uppercase tracking-wider">
                   Store Operations
                 </span>
               </div>
@@ -120,8 +122,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   onClick={() => setMobileMenuOpen(false)}
                   className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
                     isActive
-                      ? 'bg-brand-emerald text-czns-950 shadow-md'
-                      : 'text-czns-300 hover:text-white hover:bg-czns-850'
+                      ? 'bg-emerald-600 text-white shadow-md'
+                      : 'text-slate-400 hover:text-white hover:bg-slate-800'
                   }`}
                 >
                   <Icon className="w-4 h-4" />
@@ -133,11 +135,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
 
         {/* Footer Actions */}
-        <div className="pt-4 border-t border-czns-800 space-y-2">
+        <div className="pt-4 border-t border-slate-800 space-y-2">
           <Link
             href="/"
             target="_blank"
-            className="flex items-center justify-between px-3 py-2 rounded-xl text-xs text-czns-400 hover:text-white hover:bg-czns-850 transition-colors"
+            className="flex items-center justify-between px-3 py-2 rounded-xl text-xs text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
           >
             <span>View Public Store</span>
             <ExternalLink className="w-3.5 h-3.5" />

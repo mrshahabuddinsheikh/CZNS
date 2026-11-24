@@ -41,7 +41,7 @@ export default function AdminGatewaysPage() {
 
   useEffect(() => {
     const token = localStorage.getItem('czns_admin_token');
-    fetch('http://localhost:5000/api/v1/admin/settings', {
+    fetch('/api/v1/admin/settings', {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
@@ -82,7 +82,7 @@ export default function AdminGatewaysPage() {
 
     const token = localStorage.getItem('czns_admin_token');
     try {
-      const res = await fetch('http://localhost:5000/api/v1/admin/settings', {
+      const res = await fetch('/api/v1/admin/settings', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

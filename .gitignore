@@ -12,3 +12,7 @@ apps/api/data/*.sqlite-wal
 apps/api/data/*.sqlite-shm
 .DS_Store
 *.tsbuildinfo
+cpanel_cookies.txt
+*.tar.gz
+test_*.php
+

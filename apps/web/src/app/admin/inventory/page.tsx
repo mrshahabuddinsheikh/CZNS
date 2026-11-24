@@ -80,7 +80,7 @@ export default function AdminInventoryPage() {
     setLoading(true);
     const token = localStorage.getItem('czns_admin_token');
     try {
-      const res = await fetch('http://localhost:5000/api/v1/admin/products', {
+      const res = await fetch('/api/v1/admin/products', {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -99,7 +99,7 @@ export default function AdminInventoryPage() {
   const handleDelete = async (id: string, prodName: string) => {
     if (!confirm(`Are you sure you want to delete ${prodName}?`)) return;
     const token = localStorage.getItem('czns_admin_token');
-    await fetch(`http://localhost:5000/api/v1/admin/products/${id}`, {
+    await fetch(`/api/v1/admin/products/${id}`, {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -152,7 +152,7 @@ export default function AdminInventoryPage() {
     setSubmitting(true);
     const token = localStorage.getItem('czns_admin_token');
     try {
-      const res = await fetch('http://localhost:5000/api/v1/admin/products', {
+      const res = await fetch('/api/v1/admin/products', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

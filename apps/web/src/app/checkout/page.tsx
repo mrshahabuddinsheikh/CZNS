@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { motion } from 'framer-motion';
 import {
   ShieldCheck,
   Truck,
@@ -18,6 +19,8 @@ import {
   Tag,
   Lock,
   Globe,
+  MapPin,
+  CheckCircle2,
 } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { apiFetch, formatPKR } from '../../lib/api';
@@ -148,19 +151,23 @@ export default function CheckoutPage() {
 
   // Discount calculation
   let discountAmount = appliedCoupon ? appliedCoupon.discount : 0;
-  if (useCoins) {
-    discountAmount += Math.min(storeCoins, 1000); // Max 1000 coins per order
+  let coinsDiscount = 0;
+  if (useCoins && storeCoins > 0) {
+    // 100 coins = Rs. 100
+    coinsDiscount = Math.min(storeCoins, subtotal * 0.1); // Max 10% discount from coins
   }
 
-  const finalTotal = Math.max(0, subtotal - discountAmount + deliveryFee);
+  const finalTotal = Math.max(0, subtotal + deliveryFee - discountAmount - coinsDiscount);
 
-  // Handle Coupon Validation
-  const handleApplyCoupon = async () => {
+  // Coupon validation
+  const handleApplyCoupon = async (e: React.FormEvent) => {
+    e.preventDefault();
     if (!couponCode.trim()) return;
+
     setCouponLoading(true);
     setCouponError('');
     try {
-      const res = await fetch('http://localhost:5000/api/v1/coupons/validate', {
+      const res = await fetch('/api/v1/coupons/validate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -170,18 +177,17 @@ export default function CheckoutPage() {
       });
 
       const data = await res.json();
-      if (!res.ok) {
-        setCouponError(data.error || 'Invalid coupon code');
-        setAppliedCoupon(null);
-      } else {
+      if (res.ok && data.valid) {
         setAppliedCoupon({
           code: data.code,
-          discount: data.calculated_discount,
+          discount: data.discount_amount,
           message: data.message,
         });
+      } else {
+        setCouponError(data.error || 'Invalid or expired coupon code');
       }
-    } catch (e: any) {
-      setCouponError('Failed to validate coupon');
+    } catch (err: any) {
+      setCouponError(err.message || 'Error validating coupon');
     } finally {
       setCouponLoading(false);
     }
@@ -193,7 +199,7 @@ export default function CheckoutPage() {
     setErrorMsg('');
 
     if (cart.length === 0) {
-      setErrorMsg('Your bag is empty.');
+      setErrorMsg('Your cart is empty');
       return;
     }
 
@@ -238,7 +244,7 @@ export default function CheckoutPage() {
         notes: `Customer Order for ${effectiveCity}`,
       };
 
-      const res = await fetch('http://localhost:5000/api/v1/orders', {
+      const res = await fetch('/api/v1/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -264,15 +270,18 @@ export default function CheckoutPage() {
   if (cart.length === 0) {
     return (
       <div className="max-w-3xl mx-auto px-4 py-20 text-center space-y-4">
-        <h2 className="text-2xl font-bold">Your Bag is Empty</h2>
-        <p className="text-xs text-czns-400">
+        <div className="w-16 h-16 rounded-3xl bg-slate-100 flex items-center justify-center mx-auto text-slate-400">
+          <Truck className="w-8 h-8" />
+        </div>
+        <h2 className="text-2xl font-black text-slate-900">Your Bag is Empty</h2>
+        <p className="text-xs text-slate-500">
           Add a smartphone to your cart before proceeding to checkout.
         </p>
         <Link
-          href="/"
-          className="inline-block px-6 py-3 rounded-xl bg-brand-emerald text-czns-950 font-bold text-xs"
+          href="/shop"
+          className="inline-block px-6 py-3 rounded-2xl bg-slate-900 text-white font-bold text-xs hover:bg-emerald-600 transition-colors"
         >
-          Explore Phones
+          Explore Smartphones
         </Link>
       </div>
     );
@@ -282,17 +291,17 @@ export default function CheckoutPage() {
     <div className="max-w-7xl mx-auto px-4 py-8 sm:py-12 space-y-8">
       {/* Checkout Title */}
       <div>
-        <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+        <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
           Secure Pakistani Checkout
         </h1>
-        <p className="text-xs text-czns-400 mt-1">
+        <p className="text-xs text-slate-500 mt-1">
           Fast Karachi dispatch & nationwide insured courier delivery
         </p>
       </div>
 
       {errorMsg && (
-        <div className="p-4 rounded-2xl bg-rose-950/60 border border-rose-500/50 text-rose-200 text-xs font-semibold flex items-center gap-2">
-          <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
+        <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-semibold flex items-center gap-2">
+          <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
           <span>{errorMsg}</span>
         </div>
       )}
@@ -302,16 +311,16 @@ export default function CheckoutPage() {
           {/* LEFT 7 COLS: SHIPPING DETAILS & PAYMENT GATEWAYS */}
           <div className="lg:col-span-7 space-y-6">
             {/* 1. Customer Shipping Details */}
-            <div className="bg-czns-900 border border-czns-800 rounded-3xl p-6 sm:p-7 space-y-4 shadow-xl">
-              <h2 className="text-sm font-bold uppercase tracking-wider text-white flex items-center gap-2">
-                <Truck className="w-4 h-4 text-brand-emerald" />
+            <div className="bg-white/80 border border-slate-200/90 backdrop-blur-xl rounded-3xl p-6 sm:p-7 space-y-4 shadow-sm">
+              <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900 flex items-center gap-2">
+                <Truck className="w-4 h-4 text-emerald-600" />
                 1. Delivery & Contact Information
               </h2>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                 <div>
-                  <label className="text-[11px] font-semibold text-czns-400 block mb-1">
-                    Full Name <span className="text-rose-400">*</span>
+                  <label className="text-[11px] font-bold text-slate-600 block mb-1">
+                    Full Name <span className="text-rose-500">*</span>
                   </label>
                   <input
                     type="text"
@@ -319,13 +328,13 @@ export default function CheckoutPage() {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="e.g. Farhan Siddiqui"
-                    className="w-full bg-czns-950 border border-czns-750 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-brand-emerald"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 outline-none focus:bg-white focus:border-emerald-500 font-medium"
                   />
                 </div>
 
                 <div>
-                  <label className="text-[11px] font-semibold text-czns-400 block mb-1">
-                    WhatsApp Number <span className="text-rose-400">*</span>
+                  <label className="text-[11px] font-bold text-slate-600 block mb-1">
+                    WhatsApp Number <span className="text-rose-500">*</span>
                   </label>
                   <input
                     type="tel"
@@ -333,13 +342,13 @@ export default function CheckoutPage() {
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder="0300 1234567"
-                    className="w-full bg-czns-950 border border-czns-750 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-brand-emerald"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 outline-none focus:bg-white focus:border-emerald-500 font-medium"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="text-[11px] font-semibold text-czns-400 block mb-1">
+                <label className="text-[11px] font-bold text-slate-600 block mb-1">
                   Email Address (For PDF Invoice & Tracking)
                 </label>
                 <input
@@ -347,13 +356,13 @@ export default function CheckoutPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="name@example.com"
-                  className="w-full bg-czns-950 border border-czns-750 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-brand-emerald"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 outline-none focus:bg-white focus:border-emerald-500 font-medium"
                 />
               </div>
 
               <div>
-                <label className="text-[11px] font-semibold text-czns-400 block mb-1">
-                  Complete Delivery Address (House #, Street, Block / Sector, Landmark) <span className="text-rose-400">*</span>
+                <label className="text-[11px] font-bold text-slate-600 block mb-1">
+                  Complete Delivery Address (House #, Street, Block / Sector, Landmark) <span className="text-rose-500">*</span>
                 </label>
                 <textarea
                   required
@@ -361,19 +370,19 @@ export default function CheckoutPage() {
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
                   placeholder="e.g. House 42, Street 8, Block 13-D, Near Disco Bakery, Gulshan-e-Iqbal"
-                  className="w-full bg-czns-950 border border-czns-750 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-brand-emerald"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 outline-none focus:bg-white focus:border-emerald-500 font-medium"
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                 <div>
-                  <label className="text-[11px] font-semibold text-czns-400 block mb-1">
-                    Province <span className="text-rose-400">*</span>
+                  <label className="text-[11px] font-bold text-slate-600 block mb-1">
+                    Province <span className="text-rose-500">*</span>
                   </label>
                   <select
                     value={province}
                     onChange={(e) => setProvince(e.target.value)}
-                    className="w-full bg-czns-950 border border-czns-750 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-brand-emerald"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 outline-none focus:bg-white focus:border-emerald-500 font-semibold"
                   >
                     {PROVINCES.map((p) => (
                       <option key={p} value={p}>
@@ -384,13 +393,13 @@ export default function CheckoutPage() {
                 </div>
 
                 <div>
-                  <label className="text-[11px] font-semibold text-czns-400 block mb-1">
-                    City <span className="text-rose-400">*</span>
+                  <label className="text-[11px] font-bold text-slate-600 block mb-1">
+                    City <span className="text-rose-500">*</span>
                   </label>
                   <select
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
-                    className="w-full bg-czns-950 border border-czns-750 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-brand-emerald"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 outline-none focus:bg-white focus:border-emerald-500 font-semibold"
                   >
                     {MAJOR_CITIES.map((c) => (
                       <option key={c} value={c}>
@@ -403,7 +412,7 @@ export default function CheckoutPage() {
 
               {city === 'Other City' && (
                 <div>
-                  <label className="text-[11px] font-semibold text-czns-400 block mb-1">
+                  <label className="text-[11px] font-bold text-slate-600 block mb-1">
                     Enter City Name
                   </label>
                   <input
@@ -412,20 +421,20 @@ export default function CheckoutPage() {
                     value={customCity}
                     onChange={(e) => setCustomCity(e.target.value)}
                     placeholder="Enter your city name"
-                    className="w-full bg-czns-950 border border-czns-750 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-brand-emerald"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 outline-none focus:bg-white focus:border-emerald-500 font-medium"
                   />
                 </div>
               )}
             </div>
 
-            {/* 2. ADVANCED PAKISTANI PAYMENT GATEWAYS (Phase 4 Requirement) */}
-            <div className="bg-czns-900 border border-czns-800 rounded-3xl p-6 sm:p-7 space-y-5 shadow-xl">
+            {/* 2. ADVANCED PAKISTANI PAYMENT GATEWAYS */}
+            <div className="bg-white/80 border border-slate-200/90 backdrop-blur-xl rounded-3xl p-6 sm:p-7 space-y-5 shadow-sm">
               <div className="flex items-center justify-between">
-                <h2 className="text-sm font-bold uppercase tracking-wider text-white flex items-center gap-2">
-                  <CreditCard className="w-4 h-4 text-brand-emerald" />
+                <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900 flex items-center gap-2">
+                  <CreditCard className="w-4 h-4 text-emerald-600" />
                   2. Select Payment Method
                 </h2>
-                <div className="flex items-center gap-1 text-[11px] text-brand-emerald font-semibold">
+                <div className="flex items-center gap-1 text-[11px] text-emerald-700 font-bold">
                   <Lock className="w-3.5 h-3.5" />
                   <span>256-Bit SSL Encrypted</span>
                 </div>
@@ -435,10 +444,10 @@ export default function CheckoutPage() {
               <div
                 className={`p-4 rounded-2xl border transition-all ${
                   paymentMethod === 'cod' && isCodAllowed
-                    ? 'bg-emerald-950/40 border-brand-emerald ring-1 ring-brand-emerald'
+                    ? 'bg-emerald-50/90 border-emerald-500 ring-2 ring-emerald-500/20'
                     : isCodAllowed
-                    ? 'bg-czns-950/60 border-czns-800 hover:border-czns-700'
-                    : 'bg-czns-950/30 border-czns-850 opacity-60 cursor-not-allowed'
+                    ? 'bg-white border-slate-200 hover:border-slate-300'
+                    : 'bg-slate-50 border-slate-200 opacity-60 cursor-not-allowed'
                 }`}
               >
                 <label className="flex items-start gap-3 cursor-pointer">
@@ -449,28 +458,28 @@ export default function CheckoutPage() {
                     disabled={!isCodAllowed}
                     checked={paymentMethod === 'cod'}
                     onChange={() => setPaymentMethod('cod')}
-                    className="mt-1 accent-brand-emerald cursor-pointer"
+                    className="mt-1 accent-emerald-600 cursor-pointer"
                   />
                   <div className="flex-1">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-white flex items-center gap-2">
+                      <span className="text-xs font-bold text-slate-900 flex items-center gap-2">
                         Cash on Delivery (Karachi Delivery Fee: Rs. 250)
                         {isKarachi && (
-                          <span className="text-[10px] bg-brand-emerald/20 text-brand-emerald px-2 py-0.2 rounded-full font-bold">
+                          <span className="text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.2 rounded-full font-bold">
                             Rider Fast Dispatch
                           </span>
                         )}
                       </span>
                     </div>
 
-                    <p className="text-[11px] text-czns-400 mt-1">
+                    <p className="text-[11px] text-slate-500 mt-1">
                       Pay cash upon inspecting the phone seal or package at your doorstep in Karachi.
                     </p>
 
-                    {/* PHASE 4 RULE: Alert notice if customer selects other city */}
+                    {/* Alert notice if customer selects other city */}
                     {!isKarachi && karachiOnlyCod && (
-                      <div className="mt-2 p-2.5 rounded-xl bg-amber-950/50 border border-amber-500/40 text-[11px] text-amber-200 flex items-center gap-2">
-                        <AlertCircle className="w-4 h-4 text-brand-gold shrink-0" />
+                      <div className="mt-2 p-2.5 rounded-xl bg-amber-50 border border-amber-200 text-[11px] text-amber-800 flex items-center gap-2 font-medium">
+                        <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
                         <span>
                           Cash on Delivery is available in Karachi only. Orders from other cities require online payment in advance.
                         </span>
@@ -484,8 +493,8 @@ export default function CheckoutPage() {
               <div
                 className={`p-4 rounded-2xl border transition-all ${
                   paymentMethod === 'jazzcash'
-                    ? 'bg-amber-950/40 border-brand-gold ring-1 ring-brand-gold'
-                    : 'bg-czns-950/60 border-czns-800 hover:border-czns-700'
+                    ? 'bg-rose-50/90 border-rose-500 ring-2 ring-rose-500/20'
+                    : 'bg-white border-slate-200 hover:border-slate-300'
                 }`}
               >
                 <label className="flex items-start gap-3 cursor-pointer">
@@ -495,67 +504,70 @@ export default function CheckoutPage() {
                     value="jazzcash"
                     checked={paymentMethod === 'jazzcash'}
                     onChange={() => setPaymentMethod('jazzcash')}
-                    className="mt-1 accent-brand-gold cursor-pointer"
+                    className="mt-1 accent-rose-600 cursor-pointer"
                   />
                   <div className="flex-1">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-white">
-                        JazzCash Mobile Wallet (Free Shipping on Advance Pay)
-                      </span>
-                      <span className="text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded font-bold">
-                        JazzCash
+                      <span className="text-xs font-bold text-slate-900 flex items-center gap-2">
+                        JazzCash Mobile Account / Till
+                        <span className="text-[10px] bg-rose-100 text-rose-800 px-2 py-0.2 rounded-full font-bold">
+                          Free Express Shipping
+                        </span>
                       </span>
                     </div>
 
+                    <p className="text-[11px] text-slate-500 mt-1">
+                      Transfer to our verified JazzCash merchant account and enter your Transaction ID (TID).
+                    </p>
+
                     {paymentMethod === 'jazzcash' && (
-                      <div className="mt-3 p-3.5 rounded-xl bg-czns-900 border border-czns-800 space-y-3 animate-fade-in">
-                        <div className="text-[11px] text-czns-300">
-                          Transfer total <strong className="text-brand-gold">{formatPKR(finalTotal)}</strong> to our official JazzCash merchant account:
+                      <div className="mt-3 p-3.5 rounded-2xl bg-white border border-rose-200 space-y-3">
+                        <div className="flex items-center justify-between text-xs">
+                          <div>
+                            <span className="text-[10px] text-slate-500 block uppercase font-bold">Account Title</span>
+                            <span className="font-bold text-slate-900">{settings?.jazzcash_title || 'CZNS Mobile Store'}</span>
+                          </div>
+                          <div className="text-right">
+                            <span className="text-[10px] text-slate-500 block uppercase font-bold">Account Number</span>
+                            <span className="font-black text-rose-700 tracking-wider">
+                              {settings?.jazzcash_number || '0300 1234567'}
+                            </span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => copyToClipboard(settings?.jazzcash_number || '03001234567', 'jazz')}
+                            className="p-1.5 rounded-lg bg-rose-50 text-rose-700 hover:bg-rose-100"
+                          >
+                            {copiedKey === 'jazz' ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                          </button>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-2 text-xs">
-                          <div className="p-2.5 rounded-lg bg-czns-950 border border-czns-800">
-                            <span className="text-[10px] text-czns-400 block">Account Title</span>
-                            <span className="font-bold text-white">{settings?.jazzcash_title}</span>
+                        <div className="pt-2 border-t border-slate-100 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div>
+                            <label className="text-[10px] font-bold text-slate-600 block mb-1">
+                              Sender JazzCash Mobile #
+                            </label>
+                            <input
+                              type="tel"
+                              value={senderMobile}
+                              onChange={(e) => setSenderMobile(e.target.value)}
+                              placeholder="030X XXXXXXX"
+                              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 outline-none focus:bg-white focus:border-rose-500 font-semibold"
+                            />
                           </div>
-
-                          <div className="p-2.5 rounded-lg bg-czns-950 border border-czns-800 flex items-center justify-between">
-                            <div>
-                              <span className="text-[10px] text-czns-400 block">JazzCash Number</span>
-                              <span className="font-bold text-brand-gold tracking-wider">
-                                {settings?.jazzcash_number}
-                              </span>
-                            </div>
-                            <button
-                              type="button"
-                              onClick={() => copyToClipboard(settings?.jazzcash_number || '', 'jc')}
-                              className="p-1 rounded bg-czns-800 hover:bg-czns-700 text-czns-300 hover:text-white"
-                            >
-                              {copiedKey === 'jc' ? (
-                                <Check className="w-3.5 h-3.5 text-brand-emerald" />
-                              ) : (
-                                <Copy className="w-3.5 h-3.5" />
-                              )}
-                            </button>
+                          <div>
+                            <label className="text-[10px] font-bold text-slate-600 block mb-1">
+                              Transaction ID (TID) *
+                            </label>
+                            <input
+                              type="text"
+                              required
+                              value={tid}
+                              onChange={(e) => setTid(e.target.value)}
+                              placeholder="e.g. 02938472910"
+                              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 outline-none focus:bg-white focus:border-rose-500 font-bold"
+                            />
                           </div>
-                        </div>
-
-                        {/* Customer TID Input (Anti-fraud verification) */}
-                        <div className="pt-1">
-                          <label className="text-[11px] font-semibold text-czns-300 block mb-1">
-                            Enter JazzCash Transaction ID (TID) <span className="text-rose-400">*</span>
-                          </label>
-                          <input
-                            type="text"
-                            required={paymentMethod === 'jazzcash'}
-                            value={tid}
-                            onChange={(e) => setTid(e.target.value)}
-                            placeholder="e.g. 104829104812"
-                            className="w-full bg-czns-950 border border-czns-750 rounded-xl px-3 py-2 text-xs text-white placeholder-czns-500 outline-none focus:border-brand-gold font-mono"
-                          />
-                          <p className="text-[10px] text-czns-400 mt-1">
-                            Orders are saved as Unverified / Pending until confirmed in banking portal.
-                          </p>
                         </div>
                       </div>
                     )}
@@ -567,8 +579,8 @@ export default function CheckoutPage() {
               <div
                 className={`p-4 rounded-2xl border transition-all ${
                   paymentMethod === 'easypaisa'
-                    ? 'bg-emerald-950/40 border-brand-emerald ring-1 ring-brand-emerald'
-                    : 'bg-czns-950/60 border-czns-800 hover:border-czns-700'
+                    ? 'bg-emerald-50/90 border-emerald-500 ring-2 ring-emerald-500/20'
+                    : 'bg-white border-slate-200 hover:border-slate-300'
                 }`}
               >
                 <label className="flex items-start gap-3 cursor-pointer">
@@ -578,63 +590,70 @@ export default function CheckoutPage() {
                     value="easypaisa"
                     checked={paymentMethod === 'easypaisa'}
                     onChange={() => setPaymentMethod('easypaisa')}
-                    className="mt-1 accent-brand-emerald cursor-pointer"
+                    className="mt-1 accent-emerald-600 cursor-pointer"
                   />
                   <div className="flex-1">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-white">
-                        Easypaisa Mobile Wallet (Free Shipping)
-                      </span>
-                      <span className="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded font-bold">
-                        Easypaisa
+                      <span className="text-xs font-bold text-slate-900 flex items-center gap-2">
+                        Easypaisa Mobile Wallet
+                        <span className="text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.2 rounded-full font-bold">
+                          Free Express Shipping
+                        </span>
                       </span>
                     </div>
 
+                    <p className="text-[11px] text-slate-500 mt-1">
+                      Direct Easypaisa transfer to verified CZNS merchant account.
+                    </p>
+
                     {paymentMethod === 'easypaisa' && (
-                      <div className="mt-3 p-3.5 rounded-xl bg-czns-900 border border-czns-800 space-y-3 animate-fade-in">
-                        <div className="text-[11px] text-czns-300">
-                          Transfer total <strong className="text-brand-emerald">{formatPKR(finalTotal)}</strong> to our verified Easypaisa account:
+                      <div className="mt-3 p-3.5 rounded-2xl bg-white border border-emerald-200 space-y-3">
+                        <div className="flex items-center justify-between text-xs">
+                          <div>
+                            <span className="text-[10px] text-slate-500 block uppercase font-bold">Account Title</span>
+                            <span className="font-bold text-slate-900">{settings?.easypaisa_title || 'CZNS Mobile Store'}</span>
+                          </div>
+                          <div className="text-right">
+                            <span className="text-[10px] text-slate-500 block uppercase font-bold">Account Number</span>
+                            <span className="font-black text-emerald-700 tracking-wider">
+                              {settings?.easypaisa_number || '0345 1234567'}
+                            </span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => copyToClipboard(settings?.easypaisa_number || '03451234567', 'ep')}
+                            className="p-1.5 rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
+                          >
+                            {copiedKey === 'ep' ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                          </button>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-2 text-xs">
-                          <div className="p-2.5 rounded-lg bg-czns-950 border border-czns-800">
-                            <span className="text-[10px] text-czns-400 block">Account Title</span>
-                            <span className="font-bold text-white">{settings?.easypaisa_title}</span>
+                        <div className="pt-2 border-t border-slate-100 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div>
+                            <label className="text-[10px] font-bold text-slate-600 block mb-1">
+                              Sender Easypaisa Mobile #
+                            </label>
+                            <input
+                              type="tel"
+                              value={senderMobile}
+                              onChange={(e) => setSenderMobile(e.target.value)}
+                              placeholder="034X XXXXXXX"
+                              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 outline-none focus:bg-white focus:border-emerald-500 font-semibold"
+                            />
                           </div>
-
-                          <div className="p-2.5 rounded-lg bg-czns-950 border border-czns-800 flex items-center justify-between">
-                            <div>
-                              <span className="text-[10px] text-czns-400 block">Easypaisa Number</span>
-                              <span className="font-bold text-brand-emerald tracking-wider">
-                                {settings?.easypaisa_number}
-                              </span>
-                            </div>
-                            <button
-                              type="button"
-                              onClick={() => copyToClipboard(settings?.easypaisa_number || '', 'ep')}
-                              className="p-1 rounded bg-czns-800 hover:bg-czns-700 text-czns-300 hover:text-white"
-                            >
-                              {copiedKey === 'ep' ? (
-                                <Check className="w-3.5 h-3.5 text-brand-emerald" />
-                              ) : (
-                                <Copy className="w-3.5 h-3.5" />
-                              )}
-                            </button>
+                          <div>
+                            <label className="text-[10px] font-bold text-slate-600 block mb-1">
+                              Transaction ID (TID) *
+                            </label>
+                            <input
+                              type="text"
+                              required
+                              value={tid}
+                              onChange={(e) => setTid(e.target.value)}
+                              placeholder="e.g. 1192837465"
+                              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 outline-none focus:bg-white focus:border-emerald-500 font-bold"
+                            />
                           </div>
-                        </div>
-
-                        <div className="pt-1">
-                          <label className="text-[11px] font-semibold text-czns-300 block mb-1">
-                            Enter Easypaisa TID <span className="text-rose-400">*</span>
-                          </label>
-                          <input
-                            type="text"
-                            required={paymentMethod === 'easypaisa'}
-                            value={tid}
-                            onChange={(e) => setTid(e.target.value)}
-                            placeholder="e.g. EP9849204821"
-                            className="w-full bg-czns-950 border border-czns-750 rounded-xl px-3 py-2 text-xs text-white placeholder-czns-500 outline-none focus:border-brand-emerald font-mono"
-                          />
                         </div>
                       </div>
                     )}
@@ -642,12 +661,12 @@ export default function CheckoutPage() {
                 </label>
               </div>
 
-              {/* PAYMENT OPTION 4: DIRECT BANK TRANSFER (IBFT / RAAST) */}
+              {/* PAYMENT OPTION 4: MEEZAN BANK IBFT / RAAST */}
               <div
                 className={`p-4 rounded-2xl border transition-all ${
                   paymentMethod === 'bank_transfer'
-                    ? 'bg-blue-950/40 border-blue-500 ring-1 ring-blue-500'
-                    : 'bg-czns-950/60 border-czns-800 hover:border-czns-700'
+                    ? 'bg-blue-50/90 border-blue-500 ring-2 ring-blue-500/20'
+                    : 'bg-white border-slate-200 hover:border-slate-300'
                 }`}
               >
                 <label className="flex items-start gap-3 cursor-pointer">
@@ -657,346 +676,192 @@ export default function CheckoutPage() {
                     value="bank_transfer"
                     checked={paymentMethod === 'bank_transfer'}
                     onChange={() => setPaymentMethod('bank_transfer')}
-                    className="mt-1 accent-blue-500 cursor-pointer"
+                    className="mt-1 accent-blue-600 cursor-pointer"
                   />
                   <div className="flex-1">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-white">
-                        Direct Bank Transfer (IBFT / Raast ID)
-                      </span>
-                      <span className="text-[10px] bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded font-bold">
-                        Meezan Bank
+                      <span className="text-xs font-bold text-slate-900 flex items-center gap-2">
+                        Bank Transfer (IBFT) / Raast Instant
+                        <span className="text-[10px] bg-blue-100 text-blue-800 px-2 py-0.2 rounded-full font-bold">
+                          Free Express Shipping
+                        </span>
                       </span>
                     </div>
+
+                    <p className="text-[11px] text-slate-500 mt-1">
+                      Direct online transfer via any Pakistani banking app using IBAN or Raast ID.
+                    </p>
 
                     {paymentMethod === 'bank_transfer' && (
-                      <div className="mt-3 p-3.5 rounded-xl bg-czns-900 border border-czns-800 space-y-3 animate-fade-in">
-                        <div className="text-[11px] text-czns-300">
-                          Transfer <strong className="text-blue-300">{formatPKR(finalTotal)}</strong> via mobile banking app (IBFT or Raast):
-                        </div>
-
-                        <div className="space-y-2 text-xs">
-                          <div className="p-2.5 rounded-lg bg-czns-950 border border-czns-800 flex items-center justify-between">
-                            <div>
-                              <span className="text-[10px] text-czns-400 block">Bank Name</span>
-                              <span className="font-bold text-white">{settings?.bank_name}</span>
-                            </div>
-                            <span className="text-xs font-semibold text-czns-400">
-                              {settings?.bank_account_title}
+                      <div className="mt-3 p-3.5 rounded-2xl bg-white border border-blue-200 space-y-3">
+                        <div className="space-y-1.5 text-xs">
+                          <div className="flex justify-between">
+                            <span className="text-slate-500">Bank Name:</span>
+                            <span className="font-bold text-slate-900">{settings?.bank_name || 'Meezan Bank Limited'}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-slate-500">Account Title:</span>
+                            <span className="font-bold text-slate-900">{settings?.bank_account_title || 'CZNS SMARTPHONE STORE'}</span>
+                          </div>
+                          <div className="flex justify-between items-center">
+                            <span className="text-slate-500">IBAN / Acc #:</span>
+                            <span className="font-mono font-bold text-blue-700">
+                              {settings?.bank_iban || 'PK00MEZN0001020304050607'}
                             </span>
-                          </div>
-
-                          <div className="p-2.5 rounded-lg bg-czns-950 border border-czns-800 flex items-center justify-between">
-                            <div>
-                              <span className="text-[10px] text-czns-400 block">Account Number</span>
-                              <span className="font-bold text-white font-mono">
-                                {settings?.bank_account_number}
-                              </span>
-                            </div>
                             <button
                               type="button"
-                              onClick={() => copyToClipboard(settings?.bank_account_number || '', 'acc')}
-                              className="p-1 rounded bg-czns-800 hover:bg-czns-700 text-czns-300"
+                              onClick={() => copyToClipboard(settings?.bank_iban || 'PK00MEZN0001020304050607', 'iban')}
+                              className="p-1 rounded bg-blue-50 text-blue-700"
                             >
-                              {copiedKey === 'acc' ? (
-                                <Check className="w-3.5 h-3.5 text-brand-emerald" />
-                              ) : (
-                                <Copy className="w-3.5 h-3.5" />
-                              )}
-                            </button>
-                          </div>
-
-                          <div className="p-2.5 rounded-lg bg-czns-950 border border-czns-800 flex items-center justify-between">
-                            <div>
-                              <span className="text-[10px] text-czns-400 block">24-Character IBAN</span>
-                              <span className="font-bold text-white font-mono text-[11px]">
-                                {settings?.bank_iban}
-                              </span>
-                            </div>
-                            <button
-                              type="button"
-                              onClick={() => copyToClipboard(settings?.bank_iban || '', 'iban')}
-                              className="p-1 rounded bg-czns-800 hover:bg-czns-700 text-czns-300"
-                            >
-                              {copiedKey === 'iban' ? (
-                                <Check className="w-3.5 h-3.5 text-brand-emerald" />
-                              ) : (
-                                <Copy className="w-3.5 h-3.5" />
-                              )}
+                              {copiedKey === 'iban' ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
                             </button>
                           </div>
                         </div>
 
-                        <div className="pt-1">
-                          <label className="text-[11px] font-semibold text-czns-300 block mb-1">
-                            Bank Reference / IBFT Transaction ID <span className="text-rose-400">*</span>
+                        <div className="pt-2 border-t border-slate-100">
+                          <label className="text-[10px] font-bold text-slate-600 block mb-1">
+                            Bank Reference / Transaction ID (TID) *
                           </label>
                           <input
                             type="text"
-                            required={paymentMethod === 'bank_transfer'}
+                            required
                             value={tid}
                             onChange={(e) => setTid(e.target.value)}
-                            placeholder="e.g. MEZN-994812"
-                            className="w-full bg-czns-950 border border-czns-750 rounded-xl px-3 py-2 text-xs text-white placeholder-czns-500 outline-none focus:border-blue-500 font-mono"
+                            placeholder="Enter 12-digit IBFT Reference or Stanley confirmation ID"
+                            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 outline-none focus:bg-white focus:border-blue-500 font-bold"
                           />
                         </div>
                       </div>
                     )}
-                  </div>
-                </label>
-              </div>
-
-              {/* PAYMENT OPTION 5: DEBIT / CREDIT CARD */}
-              <div
-                className={`p-4 rounded-2xl border transition-all ${
-                  paymentMethod === 'card'
-                    ? 'bg-purple-950/40 border-purple-500 ring-1 ring-purple-500'
-                    : 'bg-czns-950/60 border-czns-800 hover:border-czns-700'
-                }`}
-              >
-                <label className="flex items-start gap-3 cursor-pointer">
-                  <input
-                    type="radio"
-                    name="payment"
-                    value="card"
-                    checked={paymentMethod === 'card'}
-                    onChange={() => setPaymentMethod('card')}
-                    className="mt-1 accent-purple-500 cursor-pointer"
-                  />
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-white">
-                        Debit / Credit Card (Visa, Mastercard, PayPak)
-                      </span>
-                      <span className="text-[10px] bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded font-bold">
-                        Instant Approval
-                      </span>
-                    </div>
-
-                    {paymentMethod === 'card' && (
-                      <div className="mt-3 p-3.5 rounded-xl bg-czns-900 border border-czns-800 space-y-3 animate-fade-in">
-                        <div>
-                          <label className="text-[10px] font-semibold text-czns-400 block mb-1">
-                            Cardholder Name
-                          </label>
-                          <input
-                            type="text"
-                            value={cardName}
-                            onChange={(e) => setCardName(e.target.value)}
-                            placeholder="Name on card"
-                            className="w-full bg-czns-950 border border-czns-750 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-purple-500"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="text-[10px] font-semibold text-czns-400 block mb-1">
-                            16-Digit Card Number
-                          </label>
-                          <input
-                            type="text"
-                            maxLength={19}
-                            value={cardNumber}
-                            onChange={(e) => setCardNumber(e.target.value)}
-                            placeholder="4242 •••• •••• 4242"
-                            className="w-full bg-czns-950 border border-czns-750 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-purple-500 font-mono"
-                          />
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-2">
-                          <div>
-                            <label className="text-[10px] font-semibold text-czns-400 block mb-1">
-                              Expiry (MM/YY)
-                            </label>
-                            <input
-                              type="text"
-                              maxLength={5}
-                              value={cardExpiry}
-                              onChange={(e) => setCardExpiry(e.target.value)}
-                              placeholder="12/28"
-                              className="w-full bg-czns-950 border border-czns-750 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-purple-500 font-mono"
-                            />
-                          </div>
-
-                          <div>
-                            <label className="text-[10px] font-semibold text-czns-400 block mb-1">
-                              CVV / CVC
-                            </label>
-                            <input
-                              type="password"
-                              maxLength={4}
-                              value={cardCvv}
-                              onChange={(e) => setCardCvv(e.target.value)}
-                              placeholder="•••"
-                              className="w-full bg-czns-950 border border-czns-750 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-purple-500 font-mono"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </label>
-              </div>
-
-              {/* PAYMENT OPTION 6: PAYONEER / OVERSEAS */}
-              <div
-                className={`p-4 rounded-2xl border transition-all ${
-                  paymentMethod === 'safepay'
-                    ? 'bg-blue-950/40 border-blue-400 ring-1 ring-blue-400'
-                    : 'bg-czns-950/60 border-czns-800 hover:border-czns-700'
-                }`}
-              >
-                <label className="flex items-start gap-3 cursor-pointer">
-                  <input
-                    type="radio"
-                    name="payment"
-                    value="safepay"
-                    checked={paymentMethod === 'safepay'}
-                    onChange={() => setPaymentMethod('safepay')}
-                    className="mt-1 accent-blue-400 cursor-pointer"
-                  />
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-white flex items-center gap-1.5">
-                        <Globe className="w-3.5 h-3.5 text-blue-400" />
-                        Overseas Pakistanis (Payoneer / Safepay Gateway)
-                      </span>
-                      <span className="text-[10px] bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded font-bold">
-                        International
-                      </span>
-                    </div>
-                    <p className="text-[11px] text-czns-400 mt-1">
-                      Paying from Dubai, UK, USA, or Saudi Arabia for your family in Pakistan.
-                    </p>
                   </div>
                 </label>
               </div>
             </div>
           </div>
 
-          {/* RIGHT 5 COLS: ORDER SUMMARY, COUPONS, LOYALTY */}
+          {/* RIGHT 5 COLS: ORDER SUMMARY, COUPONS & COINS */}
           <div className="lg:col-span-5 space-y-6">
-            <div className="bg-czns-900 border border-czns-800 rounded-3xl p-6 space-y-5 shadow-2xl sticky top-24">
-              <h2 className="text-sm font-bold uppercase tracking-wider text-white pb-3 border-b border-czns-800">
-                Order Summary ({cart.length} items)
+            <div className="bg-white/80 border border-slate-200/90 backdrop-blur-xl rounded-3xl p-6 sm:p-7 space-y-5 shadow-sm sticky top-24">
+              <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900">
+                Order Summary ({cart.length} {cart.length === 1 ? 'item' : 'items'})
               </h2>
 
               {/* Items List */}
               <div className="space-y-3 max-h-60 overflow-y-auto pr-1">
                 {cart.map((item) => (
-                  <div
-                    key={item.variant_id}
-                    className="flex items-center justify-between gap-3 text-xs"
-                  >
-                    <div className="flex items-center gap-2 overflow-hidden">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={item.image_url}
-                        alt={item.product_name}
-                        className="w-10 h-10 object-cover rounded-lg bg-czns-950 shrink-0"
-                      />
-                      <div className="overflow-hidden">
-                        <div className="font-bold text-white truncate">
-                          {item.product_name}
-                        </div>
-                        <div className="text-[10px] text-czns-400">
-                          {item.storage} • {item.color_name} x{item.quantity}
-                        </div>
+                  <div key={item.variant_id} className="flex items-center gap-3 text-xs">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={item.image_url}
+                      alt={item.product_name}
+                      className="w-12 h-12 object-cover rounded-xl bg-slate-50 border border-slate-200 shrink-0"
+                    />
+                    <div className="flex-1 min-w-0">
+                      <div className="font-bold text-slate-900 truncate">{item.product_name}</div>
+                      <div className="text-[11px] text-slate-500">
+                        {item.storage} • {item.color_name} x{item.quantity}
                       </div>
+                      {item.is_used === 1 && (
+                        <span className="text-[10px] text-amber-700 font-bold">
+                          🔋 {item.battery_health}% • {item.condition_grade}
+                        </span>
+                      )}
                     </div>
-                    <div className="font-bold text-white shrink-0">
+                    <div className="font-black text-slate-900">
                       {formatPKR(item.price * item.quantity)}
                     </div>
                   </div>
                 ))}
               </div>
 
-              {/* Coupon Code Section */}
-              <div className="pt-3 border-t border-czns-800/80 space-y-2">
-                <label className="text-[11px] font-semibold text-czns-400 block">
-                  Have a Promo Code? (e.g. CZNS500)
-                </label>
+              {/* Coupon Code Engine */}
+              <div className="pt-3 border-t border-slate-100 space-y-2">
+                <span className="text-[11px] font-bold text-slate-600 block uppercase tracking-wider">
+                  Discount Coupon
+                </span>
                 <div className="flex gap-2">
                   <input
                     type="text"
                     value={couponCode}
                     onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
-                    placeholder="Enter Coupon"
-                    className="flex-1 bg-czns-950 border border-czns-750 rounded-xl px-3 py-2 text-xs text-white uppercase tracking-wider font-mono outline-none focus:border-brand-emerald"
+                    placeholder="Enter CZNS500 or WELCOME1000"
+                    className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 uppercase font-bold outline-none focus:bg-white focus:border-emerald-500"
                   />
                   <button
                     type="button"
                     onClick={handleApplyCoupon}
-                    disabled={couponLoading}
-                    className="px-4 py-2 rounded-xl bg-czns-800 hover:bg-czns-750 text-xs font-bold text-white border border-czns-700 transition-colors"
+                    disabled={couponLoading || !couponCode.trim()}
+                    className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-emerald-600 text-white text-xs font-bold transition-colors disabled:opacity-50"
                   >
                     {couponLoading ? '...' : 'Apply'}
                   </button>
                 </div>
 
                 {appliedCoupon && (
-                  <div className="text-xs text-brand-emerald font-bold flex items-center gap-1.5 animate-fade-in">
-                    <Check className="w-3.5 h-3.5" />
-                    <span>{appliedCoupon.message}</span>
-                  </div>
-                )}
-                {couponError && (
-                  <div className="text-xs text-rose-400 font-semibold">{couponError}</div>
-                )}
-              </div>
-
-              {/* Coins Loyalty Engine */}
-              <div className="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-between text-xs">
-                <div className="flex items-center gap-2 text-brand-gold">
-                  <Coins className="w-4 h-4" />
-                  <div>
-                    <span className="font-bold">Redeem Store Coins</span>
-                    <span className="block text-[10px] text-czns-400">
-                      You have {storeCoins.toLocaleString()} coins available
-                    </span>
-                  </div>
-                </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={useCoins}
-                    onChange={(e) => setUseCoins(e.target.checked)}
-                    className="sr-only peer"
-                  />
-                  <div className="w-9 h-5 bg-czns-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand-gold" />
-                </label>
-              </div>
-
-              {/* Financial Calculation Breakdown */}
-              <div className="space-y-2 text-xs pt-2 border-t border-czns-800">
-                <div className="flex justify-between text-czns-400">
-                  <span>Cart Subtotal:</span>
-                  <span className="font-semibold text-white">{formatPKR(subtotal)}</span>
-                </div>
-
-                {appliedCoupon && (
-                  <div className="flex justify-between text-brand-emerald font-semibold">
-                    <span>Coupon Discount ({appliedCoupon.code}):</span>
+                  <div className="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 font-bold flex items-center justify-between">
+                    <span>Coupon {appliedCoupon.code} applied!</span>
                     <span>-{formatPKR(appliedCoupon.discount)}</span>
                   </div>
                 )}
+                {couponError && (
+                  <div className="text-xs text-rose-600 font-medium">{couponError}</div>
+                )}
+              </div>
 
-                {useCoins && (
-                  <div className="flex justify-between text-brand-gold font-semibold">
-                    <span>Store Coins Applied:</span>
-                    <span>-{formatPKR(Math.min(storeCoins, 1000))}</span>
+              {/* Loyalty Store Coins */}
+              {storeCoins > 0 && (
+                <div className="pt-3 border-t border-slate-100">
+                  <label className="flex items-center justify-between text-xs cursor-pointer p-3 rounded-2xl bg-amber-50/80 border border-amber-200">
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={useCoins}
+                        onChange={(e) => setUseCoins(e.target.checked)}
+                        className="accent-amber-600 w-4 h-4 rounded"
+                      />
+                      <span className="font-bold text-amber-900 flex items-center gap-1">
+                        <Coins className="w-3.5 h-3.5 text-amber-600" />
+                        Redeem Store Coins ({storeCoins} available)
+                      </span>
+                    </div>
+                    {useCoins && (
+                      <span className="font-black text-amber-900">-{formatPKR(coinsDiscount)}</span>
+                    )}
+                  </label>
+                </div>
+              )}
+
+              {/* Calculations Box */}
+              <div className="pt-4 border-t border-slate-200 space-y-2 text-xs">
+                <div className="flex justify-between text-slate-500">
+                  <span>Subtotal</span>
+                  <span className="text-slate-800 font-semibold">{formatPKR(subtotal)}</span>
+                </div>
+
+                <div className="flex justify-between text-slate-500">
+                  <span>Shipping Fee</span>
+                  <span className={deliveryFee === 0 ? 'text-emerald-700 font-bold' : 'text-slate-800 font-semibold'}>
+                    {deliveryFee === 0 ? 'Free Shipping (Advance Payment)' : formatPKR(deliveryFee)}
+                  </span>
+                </div>
+
+                {appliedCoupon && (
+                  <div className="flex justify-between text-emerald-700 font-semibold">
+                    <span>Coupon Discount</span>
+                    <span>-{formatPKR(discountAmount)}</span>
                   </div>
                 )}
 
-                <div className="flex justify-between text-czns-400">
-                  <span>Delivery Charges ({effectiveCity}):</span>
-                  <span>{deliveryFee === 0 ? 'FREE (Advance Pay)' : formatPKR(deliveryFee)}</span>
-                </div>
+                {useCoins && coinsDiscount > 0 && (
+                  <div className="flex justify-between text-amber-700 font-semibold">
+                    <span>Coins Redeemed</span>
+                    <span>-{formatPKR(coinsDiscount)}</span>
+                  </div>
+                )}
 
-                <div className="pt-2 border-t border-czns-800 flex justify-between items-baseline text-base font-black text-white">
-                  <span>Total Amount:</span>
-                  <span className="text-xl sm:text-2xl text-brand-emerald">
-                    {formatPKR(finalTotal)}
-                  </span>
+                <div className="flex justify-between text-base font-black text-slate-900 pt-2 border-t border-slate-200">
+                  <span>Total Payable</span>
+                  <span className="text-emerald-700">{formatPKR(finalTotal)}</span>
                 </div>
               </div>
 
@@ -1004,18 +869,21 @@ export default function CheckoutPage() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl bg-brand-emerald hover:bg-emerald-400 text-czns-950 font-black text-sm transition-all shadow-xl shadow-emerald-950/50"
+                className="w-full py-3.5 rounded-2xl bg-slate-900 hover:bg-emerald-600 text-white text-xs sm:text-sm font-bold shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50"
               >
-                <span>
-                  {submitting
-                    ? 'Processing Order...'
-                    : `Confirm Order (${formatPKR(finalTotal)})`}
-                </span>
-                <ArrowRight className="w-4 h-4" />
+                {submitting ? (
+                  <span>Processing Your Order...</span>
+                ) : (
+                  <>
+                    <span>Confirm & Place Order</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </>
+                )}
               </button>
 
-              <div className="text-[11px] text-czns-400 text-center leading-relaxed">
-                By confirming, you agree to our 7-Day Replacement Policy and verified phone dispatch terms.
+              <div className="text-[11px] text-slate-500 text-center flex items-center justify-center gap-1.5">
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                <span>7-Day Replacement Checking Warranty Guaranteed</span>
               </div>
             </div>
           </div>

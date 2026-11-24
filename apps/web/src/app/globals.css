@@ -3,41 +3,147 @@
 @tailwind utilities;
 
 :root {
-  --background: #0b0d11;
-  --foreground: #ededed;
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --font-primary: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-secondary: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --primary-color: #10b981;
+  --primary-rgb: 16, 185, 129;
+  --primary-hover: #059669;
+  --primary-light: rgba(16, 185, 129, 0.12);
+  --primary-glow: rgba(16, 185, 129, 0.3);
+  --primary-glow-lg: 0 16px 45px -8px rgba(16, 185, 129, 0.38);
 }
 
 body {
+  font-family: var(--font-primary);
   color: var(--foreground);
   background: var(--background);
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  overflow-x: hidden;
 }
 
-/* Hide scrollbar for Chrome, Safari and Opera */
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
+h1, h2, h3, h4, h5, h6, .font-heading, .font-display {
+  font-family: var(--font-secondary);
 }
 
-/* Hide scrollbar for IE, Edge and Firefox */
-.no-scrollbar {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+/* Light Luxury Frosted Glass & Translucent Utilities */
+.glass-ronin {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(32px) saturate(200%);
+  -webkit-backdrop-filter: blur(32px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.04), inset 0 1px 1px 0 rgba(255, 255, 255, 0.95);
 }
 
-/* Custom modern scrollbar */
+.glass-translucent {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(28px) saturate(190%);
+  -webkit-backdrop-filter: blur(28px) saturate(190%);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 10px 35px 0 rgba(0, 0, 0, 0.04), inset 0 1px 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.glass-header {
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(32px) saturate(200%);
+  -webkit-backdrop-filter: blur(32px) saturate(200%);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03), inset 0 -1px 0 0 rgba(255, 255, 255, 0.6);
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.04), inset 0 1px 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.glass-card-hover {
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.glass-card-hover:hover {
+  background: rgba(255, 255, 255, 0.96);
+  transform: translateY(-5px);
+  border-color: var(--primary-color, rgba(16, 185, 129, 0.6));
+  box-shadow: 0 22px 45px -15px rgba(var(--primary-rgb, 16, 185, 129), 0.22), 0 0 30px -5px rgba(0, 0, 0, 0.04), inset 0 1px 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.glass-pill {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02), inset 0 1px 0 0 rgba(255, 255, 255, 0.7);
+}
+
+/* Dynamic Admin-Controlled Accent Utilities */
+.theme-accent-text {
+  color: var(--primary-color, #10b981) !important;
+}
+
+.theme-accent-bg {
+  background-color: var(--primary-color, #10b981) !important;
+}
+
+.theme-accent-border {
+  border-color: var(--primary-color, #10b981) !important;
+}
+
+.theme-accent-glow {
+  box-shadow: 0 12px 35px -5px rgba(var(--primary-rgb, 16, 185, 129), 0.35) !important;
+}
+
+.theme-accent-light-bg {
+  background-color: var(--primary-light, rgba(16, 185, 129, 0.12)) !important;
+}
+
+/* Custom Light Scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #13161c;
+  background: #f1f5f9;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #2b303c;
-  border-radius: 4px;
+  background: #cbd5e1;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.8);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #3f4758;
+  background: var(--primary-color, #10b981);
+}
+
+/* Floating animation keyframes */
+@keyframes floatSlow {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-8px) rotate(1deg); }
+}
+
+@keyframes floatReverse {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(10px) rotate(-1deg); }
+}
+
+.animate-float-slow {
+  animation: floatSlow 6s ease-in-out infinite;
+}
+
+.animate-float-reverse {
+  animation: floatReverse 7s ease-in-out infinite;
+}
+
+/* Pulsing aura */
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.04); }
+}
+
+.animate-glow-pulse {
+  animation: glowPulse 4s ease-in-out infinite;
 }

@@ -154,6 +154,24 @@ export function initSchema() {
       value TEXT NOT NULL
     );
 
+    -- Deal of the Day Table (24h Flash Deals with Expire & Sold Out states)
+    CREATE TABLE IF NOT EXISTS deal_of_the_day (
+      id TEXT PRIMARY KEY,
+      product_id TEXT,
+      title TEXT NOT NULL,
+      deal_price INTEGER NOT NULL,
+      regular_price INTEGER NOT NULL,
+      start_time DATETIME NOT NULL,
+      end_time DATETIME NOT NULL,
+      stock_total INTEGER NOT NULL DEFAULT 5,
+      stock_claimed INTEGER NOT NULL DEFAULT 0,
+      is_sold_out INTEGER NOT NULL DEFAULT 0,
+      is_active INTEGER NOT NULL DEFAULT 1,
+      badge_text TEXT DEFAULT 'FLASH 24H DEAL',
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE SET NULL
+    );
+
     -- Admin Users Table
     CREATE TABLE IF NOT EXISTS admins (
       id TEXT PRIMARY KEY,
@@ -199,6 +217,11 @@ export function initSchema() {
     webhook_url: '',
     social_proof_enabled: '1',
     coins_reward_percent: '2', // 2% of order value earned as coins
+    founder_name: 'Sherry',
+    founder_title: 'Founder & CEO, CZNS',
+    founder_image_url: '/founder.jpg',
+    founder_whatsapp: '923001234567',
+    founder_badge_text: 'Founder Verified',
   };
 
   const insertSetting = db.prepare(`

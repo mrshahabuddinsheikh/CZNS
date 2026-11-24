@@ -22,7 +22,7 @@ export default function AdminDashboardPage() {
 
   useEffect(() => {
     const token = localStorage.getItem('czns_admin_token');
-    fetch('http://localhost:5000/api/v1/admin/dashboard', {
+    fetch('/api/v1/admin/dashboard', {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())

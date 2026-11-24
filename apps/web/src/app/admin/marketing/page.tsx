@@ -13,6 +13,12 @@ import {
   Check,
   ExternalLink,
   Code2,
+  Flame,
+  Clock,
+  AlertCircle,
+  RotateCcw,
+  ShieldCheck,
+  Zap,
 } from 'lucide-react';
 import { Reel } from '../../../lib/types';
 
@@ -38,18 +44,59 @@ export default function AdminMarketingPage() {
   const [webhookUrl, setWebhookUrl] = useState('');
   const [pixelSaved, setPixelSaved] = useState(false);
 
+  // Deal of the Day State
+  const [deal, setDeal] = useState<any>(null);
+  const [productsList, setProductsList] = useState<any[]>([]);
+  const [dealProductId, setDealProductId] = useState('');
+  const [dealPrice, setDealPrice] = useState(0);
+  const [dealRegPrice, setDealRegPrice] = useState(0);
+  const [dealTitle, setDealTitle] = useState('');
+  const [dealBadge, setDealBadge] = useState('LIMITED 24H FLASH DEAL');
+  const [dealStock, setDealStock] = useState(5);
+  const [dealDuration, setDealDuration] = useState(24);
+  const [dealSaved, setDealSaved] = useState(false);
+
+  // Founder Profile Settings
+  const [founderName, setFounderName] = useState('Sherry');
+  const [founderTitle, setFounderTitle] = useState('Founder & CEO, CZNS');
+  const [founderImageUrl, setFounderImageUrl] = useState('/founder.jpg');
+  const [founderWhatsapp, setFounderWhatsapp] = useState('923001234567');
+  const [founderBadge, setFounderBadge] = useState('Founder Verified');
+  const [founderSaved, setFounderSaved] = useState(false);
+
   const fetchMarketingData = async () => {
     setLoading(true);
     const token = localStorage.getItem('czns_admin_token');
     try {
-      const res = await fetch('http://localhost:5000/api/v1/admin/marketing', {
+      const res = await fetch('/api/v1/admin/marketing', {
         headers: { Authorization: `Bearer ${token}` },
       });
       const d = await res.json();
       setData(d);
 
-      // Also get settings for pixels
-      const sRes = await fetch('http://localhost:5000/api/v1/admin/settings', {
+      // Load Deal of the Day
+      const dealRes = await fetch('/api/v1/deals/today');
+      if (dealRes.ok) {
+        const dealData = await dealRes.json();
+        setDeal(dealData.deal);
+        if (dealData.deal) {
+          setDealProductId(dealData.deal.product_id);
+          setDealPrice(dealData.deal.deal_price);
+          setDealRegPrice(dealData.deal.regular_price);
+          setDealTitle(dealData.deal.title);
+          setDealStock(dealData.deal.stock_total);
+        }
+      }
+
+      // Load Products for Dropdown
+      const prodRes = await fetch('/api/v1/products?limit=100');
+      if (prodRes.ok) {
+        const prodData = await prodRes.json();
+        setProductsList(prodData.products || []);
+      }
+
+      // Also get settings for pixels & founder
+      const sRes = await fetch('/api/v1/admin/settings', {
         headers: { Authorization: `Bearer ${token}` },
       });
       const sData = await sRes.json();
@@ -58,6 +105,12 @@ export default function AdminMarketingPage() {
       setTiktokPixel(s.tiktok_pixel_id || '');
       setGoogleAds(s.google_ads_id || '');
       setWebhookUrl(s.webhook_url || '');
+
+      setFounderName(s.founder_name || 'Sherry');
+      setFounderTitle(s.founder_title || 'Founder & CEO, CZNS');
+      setFounderImageUrl(s.founder_image_url || '/founder.jpg');
+      setFounderWhatsapp(s.founder_whatsapp || '923001234567');
+      setFounderBadge(s.founder_badge_text || 'Founder Verified');
     } catch (e) {
       console.error(e);
     } finally {
@@ -75,7 +128,7 @@ export default function AdminMarketingPage() {
 
     const token = localStorage.getItem('czns_admin_token');
     try {
-      const res = await fetch('http://localhost:5000/api/v1/admin/coupons', {
+      const res = await fetch('/api/v1/admin/coupons', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -104,7 +157,7 @@ export default function AdminMarketingPage() {
 
     const token = localStorage.getItem('czns_admin_token');
     try {
-      const res = await fetch('http://localhost:5000/api/v1/admin/reels', {
+      const res = await fetch('/api/v1/admin/reels', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -131,7 +184,7 @@ export default function AdminMarketingPage() {
   const handleSavePixels = async (e: React.FormEvent) => {
     e.preventDefault();
     const token = localStorage.getItem('czns_admin_token');
-    await fetch('http://localhost:5000/api/v1/admin/settings', {
+    await fetch('/api/v1/admin/settings', {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -148,9 +201,87 @@ export default function AdminMarketingPage() {
     setTimeout(() => setPixelSaved(false), 2500);
   };
 
+  const handleSaveDeal = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!dealProductId || !dealPrice) return;
+
+    try {
+      const res = await fetch('/api/v1/admin/deals/today', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          product_id: dealProductId,
+          title: dealTitle,
+          deal_price: Number(dealPrice),
+          regular_price: Number(dealRegPrice),
+          duration_hours: Number(dealDuration),
+          stock_total: Number(dealStock),
+          badge_text: dealBadge,
+        }),
+      });
+
+      if (res.ok) {
+        setDealSaved(true);
+        setTimeout(() => setDealSaved(false), 2500);
+        fetchMarketingData();
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleToggleSoldOut = async () => {
+    try {
+      const res = await fetch('/api/v1/admin/deals/today/toggle-sold-out', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ is_sold_out: deal?.is_sold_out === 1 ? 0 : 1 }),
+      });
+      if (res.ok) {
+        fetchMarketingData();
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleReset24hTimer = async () => {
+    try {
+      const res = await fetch('/api/v1/admin/deals/today/reset-timer', {
+        method: 'POST',
+      });
+      if (res.ok) {
+        fetchMarketingData();
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleSaveFounder = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const token = localStorage.getItem('czns_admin_token');
+    await fetch('/api/v1/admin/settings', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        founder_name: founderName,
+        founder_title: founderTitle,
+        founder_image_url: founderImageUrl,
+        founder_whatsapp: founderWhatsapp,
+        founder_badge_text: founderBadge,
+      }),
+    });
+    setFounderSaved(true);
+    setTimeout(() => setFounderSaved(false), 2500);
+  };
+
   const handleBackupDownload = () => {
     const token = localStorage.getItem('czns_admin_token');
-    fetch('http://localhost:5000/api/v1/admin/backup', {
+    fetch('/api/v1/admin/backup', {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.blob())
@@ -185,7 +316,7 @@ export default function AdminMarketingPage() {
         <div>
           <h1 className="text-2xl font-black text-white">Marketing Hub & WhatsApp CRM</h1>
           <p className="text-xs text-czns-400 mt-0.5">
-            Manage Shoppable Reels, Discount Coupons, WhatsApp Leads, and Ad Pixels
+            Manage Deal of the Day, Founder Verified Desk, Shoppable Reels, Discount Coupons, and Pixels
           </p>
         </div>
 
@@ -197,6 +328,363 @@ export default function AdminMarketingPage() {
           <Download className="w-4 h-4 text-brand-emerald" />
           <span>1-Click SQLite DB Backup</span>
         </button>
+      </div>
+
+      {/* A. DEAL OF THE DAY MANAGER (24H FLASH SALE & SOLD OUT STAMP) */}
+      <div className="bg-czns-900 border border-czns-800 rounded-3xl p-6 sm:p-7 space-y-6 shadow-xl">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-czns-800 pb-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
+              <Flame className="w-5 h-5" />
+            </div>
+            <div>
+              <h2 className="text-base font-black text-white flex items-center gap-2">
+                Deal of the Day Manager
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                  24-Hour Timer & Sold Out Stamp
+                </span>
+              </h2>
+              <p className="text-xs text-czns-400 mt-0.5">
+                Displays right after Hero section. Expires after 24 hours (turns black & white).
+              </p>
+            </div>
+          </div>
+
+          {dealSaved && (
+            <span className="text-xs text-brand-emerald font-bold flex items-center gap-1">
+              <Check className="w-3.5 h-3.5" /> Deal Updated!
+            </span>
+          )}
+        </div>
+
+        {/* Current Live Deal Quick Status Card */}
+        {deal && (
+          <div className="bg-czns-950/90 border border-czns-800 rounded-2xl p-4 sm:p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div className="flex items-start sm:items-center gap-4">
+              {deal.thumbnail && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={deal.thumbnail}
+                  alt={deal.title}
+                  className="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-xl border border-czns-750 bg-czns-900 shrink-0"
+                />
+              )}
+              <div className="space-y-1">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="font-bold text-white text-sm sm:text-base">{deal.title}</span>
+                  {deal.is_sold_out === 1 ? (
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-rose-500/20 text-rose-400 border border-rose-500/40 animate-pulse">
+                      Sold Out Stamp Active
+                    </span>
+                  ) : deal.is_expired ? (
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-czns-750 text-czns-300 border border-czns-600">
+                      24h Expired (B&W Active)
+                    </span>
+                  ) : (
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">
+                      Live & Ticking
+                    </span>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-3 text-xs">
+                  <span className="font-bold text-brand-emerald">
+                    Rs. {Number(deal.deal_price).toLocaleString()}
+                  </span>
+                  {deal.regular_price > deal.deal_price && (
+                    <span className="text-czns-400 line-through">
+                      Rs. {Number(deal.regular_price).toLocaleString()}
+                    </span>
+                  )}
+                  <span className="text-czns-400">
+                    Stock: {deal.stock_claimed || 0}/{deal.stock_total || 5} units
+                  </span>
+                </div>
+
+                <p className="text-[11px] text-czns-400">
+                  Ends: {new Date(deal.end_time).toLocaleString()}
+                </p>
+              </div>
+            </div>
+
+            {/* Quick Deal Actions */}
+            <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
+              {/* Toggle Sold Out Stamp */}
+              <button
+                type="button"
+                onClick={handleToggleSoldOut}
+                className={`flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold border transition-all ${
+                  deal.is_sold_out === 1
+                    ? 'bg-rose-600 hover:bg-rose-500 text-white border-rose-500 shadow-lg shadow-rose-950/40'
+                    : 'bg-czns-850 hover:bg-rose-950/40 text-czns-300 hover:text-rose-300 border-czns-750 hover:border-rose-800'
+                }`}
+              >
+                <AlertCircle className="w-3.5 h-3.5" />
+                <span>
+                  {deal.is_sold_out === 1 ? 'Remove Sold Out Stamp' : 'Mark as Sold Out Stamp'}
+                </span>
+              </button>
+
+              {/* Reset 24-Hour Timer */}
+              <button
+                type="button"
+                onClick={handleReset24hTimer}
+                className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-czns-850 hover:bg-czns-800 text-czns-200 border border-czns-750 transition-colors"
+                title="Resets the 24-hour expiration countdown from right now"
+              >
+                <RotateCcw className="w-3.5 h-3.5 text-amber-400" />
+                <span>Reset 24h Timer</span>
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Form to Set / Update Deal of the Day */}
+        <form onSubmit={handleSaveDeal} className="pt-2 border-t border-czns-800/80 space-y-4">
+          <span className="text-xs font-black uppercase tracking-wider text-czns-300 block">
+            Set Today&apos;s Deal Product
+          </span>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
+            {/* Select Existing Product */}
+            <div className="sm:col-span-2 lg:col-span-1">
+              <label className="text-[11px] font-semibold text-czns-400 block mb-1">
+                Choose Product from Inventory
+              </label>
+              <select
+                value={dealProductId}
+                onChange={(e) => {
+                  const selId = e.target.value;
+                  setDealProductId(selId);
+                  const selectedProd = productsList.find((p) => p.id === selId);
+                  if (selectedProd) {
+                    setDealTitle(selectedProd.name);
+                    const originalP = selectedProd.min_price || selectedProd.regular_price || 100000;
+                    setDealRegPrice(originalP);
+                    setDealPrice(Math.round(originalP * 0.88)); // default 12% off
+                  }
+                }}
+                className="w-full bg-czns-950 border border-czns-750 rounded-xl px-3 py-2 text-xs text-white truncate"
+              >
+                <option value="">Select a product...</option>
+                {productsList.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.name} {p.is_used ? '(Used)' : '(New)'} - Rs. {Number(p.min_price || 0).toLocaleString()}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Custom Deal Title */}
+            <div>
+              <label className="text-[11px] font-semibold text-czns-400 block mb-1">Deal Title</label>
+              <input
+                type="text"
+                required
+                value={dealTitle}
+                onChange={(e) => setDealTitle(e.target.value)}
+                placeholder="iPhone 15 Pro Max (Titanium Blue)"
+                className="w-full bg-czns-950 border border-czns-750 rounded-xl px-3 py-2 text-xs text-white"
+              />
+            </div>
+
+            {/* Badge Text */}
+            <div>
+              <label className="text-[11px] font-semibold text-czns-400 block mb-1">Badge Text</label>
+              <input
+                type="text"
+                value={dealBadge}
+                onChange={(e) => setDealBadge(e.target.value)}
+                placeholder="LIMITED 24H FLASH DEAL"
+                className="w-full bg-czns-950 border border-czns-750 rounded-xl px-3 py-2 text-xs text-white uppercase font-bold text-amber-400"
+              />
+            </div>
+
+            {/* Deal Price */}
+            <div>
+              <label className="text-[11px] font-semibold text-czns-400 block mb-1">
+                Flash Deal Price (PKR)
+              </label>
+              <input
+                type="number"
+                required
+                value={dealPrice}
+                onChange={(e) => setDealPrice(Number(e.target.value))}
+                className="w-full bg-czns-950 border border-czns-750 rounded-xl px-3 py-2 text-xs text-brand-emerald font-bold"
+              />
+            </div>
+
+            {/* Regular Price */}
+            <div>
+              <label className="text-[11px] font-semibold text-czns-400 block mb-1">
+                Regular Price (PKR)
+              </label>
+              <input
+                type="number"
+                value={dealRegPrice}
+                onChange={(e) => setDealRegPrice(Number(e.target.value))}
+                className="w-full bg-czns-950 border border-czns-750 rounded-xl px-3 py-2 text-xs text-white"
+              />
+            </div>
+
+            {/* Stock Limit */}
+            <div>
+              <label className="text-[11px] font-semibold text-czns-400 block mb-1">
+                Flash Stock Units (Auto-sold out when reached)
+              </label>
+              <input
+                type="number"
+                min="1"
+                value={dealStock}
+                onChange={(e) => setDealStock(Number(e.target.value))}
+                className="w-full bg-czns-950 border border-czns-750 rounded-xl px-3 py-2 text-xs text-white"
+              />
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between pt-2">
+            <span className="text-[11px] text-czns-400">
+              Deal will automatically reset to 24 hours duration from launch time.
+            </span>
+            <button
+              type="submit"
+              className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-black text-xs shadow-lg shadow-amber-500/20"
+            >
+              Launch Deal of the Day
+            </button>
+          </div>
+        </form>
+      </div>
+
+      {/* B. STORE FOUNDER & CEO PROFILE (HEADER DESK) */}
+      <div className="bg-czns-900 border border-czns-800 rounded-3xl p-6 sm:p-7 space-y-6 shadow-xl">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-czns-800 pb-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-2xl bg-brand-emerald/10 border border-brand-emerald/30 flex items-center justify-center text-brand-emerald">
+              <ShieldCheck className="w-5 h-5" />
+            </div>
+            <div>
+              <h2 className="text-base font-black text-white flex items-center gap-2">
+                Store Founder & Verified Owner Desk
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-brand-emerald/20 text-brand-emerald border border-brand-emerald/30">
+                  Header Pill & Customer Trust
+                </span>
+              </h2>
+              <p className="text-xs text-czns-400 mt-0.5">
+                Displays in website top header so buyers can verify the owner directly and connect on WhatsApp.
+              </p>
+            </div>
+          </div>
+
+          {founderSaved && (
+            <span className="text-xs text-brand-emerald font-bold flex items-center gap-1">
+              <Check className="w-3.5 h-3.5" /> Founder Profile Saved!
+            </span>
+          )}
+        </div>
+
+        {/* Live Preview Card */}
+        <div className="bg-czns-950/80 border border-czns-800 rounded-2xl p-4 flex flex-col sm:flex-row items-center gap-4">
+          <div className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-brand-gold/60 shadow-lg shadow-amber-500/10 shrink-0">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={founderImageUrl || '/founder.jpg'}
+              alt={founderName}
+              className="w-full h-full object-cover object-top"
+            />
+          </div>
+          <div className="space-y-0.5 text-center sm:text-left flex-1">
+            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+              <span className="font-black text-white text-sm">{founderName}</span>
+              <span className="text-[10px] bg-brand-gold/20 text-brand-gold border border-brand-gold/40 px-2 py-0.2 rounded-full font-bold">
+                {founderBadge}
+              </span>
+            </div>
+            <p className="text-xs text-czns-400">{founderTitle}</p>
+            <p className="text-[11px] font-mono text-brand-emerald">WhatsApp: +{founderWhatsapp}</p>
+          </div>
+        </div>
+
+        {/* Edit Founder Form */}
+        <form onSubmit={handleSaveFounder} className="space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
+            <div>
+              <label className="text-[11px] font-semibold text-czns-400 block mb-1">
+                Founder / Owner Name
+              </label>
+              <input
+                type="text"
+                required
+                value={founderName}
+                onChange={(e) => setFounderName(e.target.value)}
+                placeholder="Sherry"
+                className="w-full bg-czns-950 border border-czns-750 rounded-xl px-3 py-2 text-xs text-white"
+              />
+            </div>
+
+            <div>
+              <label className="text-[11px] font-semibold text-czns-400 block mb-1">
+                Official Title / Designation
+              </label>
+              <input
+                type="text"
+                required
+                value={founderTitle}
+                onChange={(e) => setFounderTitle(e.target.value)}
+                placeholder="Founder & CEO, CZNS"
+                className="w-full bg-czns-950 border border-czns-750 rounded-xl px-3 py-2 text-xs text-white"
+              />
+            </div>
+
+            <div>
+              <label className="text-[11px] font-semibold text-czns-400 block mb-1">
+                Founder Image URL (or Local Path)
+              </label>
+              <input
+                type="text"
+                required
+                value={founderImageUrl}
+                onChange={(e) => setFounderImageUrl(e.target.value)}
+                placeholder="/founder.jpg"
+                className="w-full bg-czns-950 border border-czns-750 rounded-xl px-3 py-2 text-xs text-white"
+              />
+            </div>
+
+            <div>
+              <label className="text-[11px] font-semibold text-czns-400 block mb-1">
+                Direct WhatsApp Number
+              </label>
+              <input
+                type="text"
+                required
+                value={founderWhatsapp}
+                onChange={(e) => setFounderWhatsapp(e.target.value)}
+                placeholder="923001234567"
+                className="w-full bg-czns-950 border border-czns-750 rounded-xl px-3 py-2 text-xs text-white font-mono"
+              />
+            </div>
+
+            <div>
+              <label className="text-[11px] font-semibold text-czns-400 block mb-1">
+                Header Badge Label
+              </label>
+              <input
+                type="text"
+                value={founderBadge}
+                onChange={(e) => setFounderBadge(e.target.value)}
+                placeholder="Founder Verified"
+                className="w-full bg-czns-950 border border-czns-750 rounded-xl px-3 py-2 text-xs text-white"
+              />
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            className="px-6 py-2.5 rounded-xl bg-brand-emerald hover:bg-emerald-400 text-czns-950 font-bold text-xs"
+          >
+            Save Founder Profile
+          </button>
+        </form>
       </div>
 
       {/* 1. WHATSAPP LEADS CRM (Phase 5 Feature 3) */}

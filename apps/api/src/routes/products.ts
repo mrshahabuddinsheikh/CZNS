@@ -167,7 +167,8 @@ export async function productRoutes(fastify: FastifyInstance) {
   fastify.get<{ Params: { slug: string } }>(
     '/api/v1/products/:slug',
     async (request, reply) => {
-      const { slug } = request.params;
+      const rawSlug = decodeURIComponent(request.params.slug || '').trim();
+      const slugLower = rawSlug.toLowerCase();
 
       const productSql = `
         SELECT 
@@ -177,9 +178,26 @@ export async function productRoutes(fastify: FastifyInstance) {
           b.logo_url as brand_logo
         FROM products p
         LEFT JOIN brands b ON p.brand_id = b.id
-        WHERE p.slug = ? OR p.id = ?
+        WHERE LOWER(p.slug) = ? OR p.id = ? OR LOWER(p.slug) LIKE ? OR LOWER(p.slug) LIKE ?
+        LIMIT 1
       `;
-      const product: any = db.prepare(productSql).get(slug, slug);
+      let product: any = db.prepare(productSql).get(slugLower, rawSlug, `${slugLower}%`, `%${slugLower}%`);
+
+      if (!product) {
+        // Fallback: match by partial slug or name
+        const partial = `%${slugLower.replace(/-/g, '%')}%`;
+        product = db.prepare(`
+          SELECT 
+            p.*,
+            b.name as brand_name,
+            b.slug as brand_slug,
+            b.logo_url as brand_logo
+          FROM products p
+          LEFT JOIN brands b ON p.brand_id = b.id
+          WHERE LOWER(p.slug) LIKE ? OR LOWER(p.name) LIKE ?
+          LIMIT 1
+        `).get(partial, partial);
+      }
 
       if (!product) {
         return reply.status(404).send({ error: 'Product not found' });

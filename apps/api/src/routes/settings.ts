@@ -32,7 +32,47 @@ export async function settingsRoutes(fastify: FastifyInstance) {
         meta_pixel_id: settings.meta_pixel_id || '',
         tiktok_pixel_id: settings.tiktok_pixel_id || '',
         google_ads_id: settings.google_ads_id || '',
+        founder_name: settings.founder_name || 'Sherry',
+        founder_title: settings.founder_title || 'Founder & CEO, CZNS',
+        founder_image_url: settings.founder_image_url || '/founder.jpg',
+        founder_whatsapp: settings.founder_whatsapp || '923001234567',
+        founder_badge_text: settings.founder_badge_text || 'Founder Verified',
+        primary_color: settings.primary_color || '#10b981',
+        primary_hover: settings.primary_hover || '#059669',
+        accent_preset: settings.accent_preset || 'emerald',
+        primary_font: settings.primary_font || 'Inter',
+        secondary_font: settings.secondary_font || 'Plus Jakarta Sans',
       },
+    };
+  });
+
+  // Update Theme Color, Preset & Fonts
+  fastify.put<{
+    Body: {
+      primary_color?: string;
+      primary_hover?: string;
+      accent_preset?: string;
+      primary_font?: string;
+      secondary_font?: string;
+    };
+  }>('/api/v1/settings/theme', async (request) => {
+    const { primary_color, primary_hover, accent_preset, primary_font, secondary_font } = request.body || {};
+
+    const stmt = db.prepare('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)');
+    if (primary_color) stmt.run('primary_color', primary_color);
+    if (primary_hover) stmt.run('primary_hover', primary_hover);
+    if (accent_preset) stmt.run('accent_preset', accent_preset);
+    if (primary_font) stmt.run('primary_font', primary_font);
+    if (secondary_font) stmt.run('secondary_font', secondary_font);
+
+    return {
+      success: true,
+      message: 'Theme settings updated successfully',
+      primary_color,
+      primary_hover: primary_hover || primary_color,
+      accent_preset: accent_preset || 'custom',
+      primary_font,
+      secondary_font,
     };
   });
 }

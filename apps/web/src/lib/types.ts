@@ -123,6 +123,39 @@ export interface StoreSettings {
   meta_pixel_id?: string;
   tiktok_pixel_id?: string;
   google_ads_id?: string;
+  founder_name?: string;
+  founder_title?: string;
+  founder_image_url?: string;
+  founder_whatsapp?: string;
+  founder_badge_text?: string;
+}
+
+export interface DealOfTheDay {
+  id: string;
+  product_id: string;
+  title: string;
+  deal_price: number;
+  regular_price: number;
+  start_time: string;
+  end_time: string;
+  stock_total: number;
+  stock_claimed: number;
+  is_sold_out: number;
+  is_active: number;
+  badge_text: string;
+  product_name?: string;
+  product_slug?: string;
+  thumbnail?: string;
+  is_used?: number;
+  condition_grade?: string;
+  pta_status?: string;
+  battery_health?: number;
+  brand_name?: string;
+  storages?: string[];
+  colors?: string[];
+  default_variant_id?: string;
+  seconds_remaining?: number;
+  is_expired?: boolean;
 }
 
 export interface Order {

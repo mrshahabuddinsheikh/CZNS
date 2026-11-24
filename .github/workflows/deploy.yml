@@ -1,0 +1,107 @@
+name: Deploy CZNS to cPanel
+
+on:
+  push:
+    branches:
+      - master
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    name: Build & Release Production Bundle
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install All Dependencies
+        run: npm ci
+
+      - name: Build Backend Fastify API
+        run: npm run build:api
+
+      - name: Build Frontend Next.js Storefront
+        run: npm run build:web
+        env:
+          NODE_ENV: production
+          NEXT_TELEMETRY_DISABLED: 1
+
+      - name: Prepare Clean Production Bundle
+        run: |
+          mkdir -p release_staging
+          cp server.js release_staging/
+          cp deploy.php release_staging/
+          cp package.json release_staging/
+          
+          mkdir -p release_staging/apps/api
+          cp -r apps/api/dist release_staging/apps/api/
+          cp apps/api/package.json release_staging/apps/api/
+          if [ -d apps/api/data ]; then
+            cp -r apps/api/data release_staging/apps/api/
+          fi
+          
+          mkdir -p release_staging/apps/web
+          cp -r apps/web/.next release_staging/apps/web/
+          if [ -d apps/web/public ]; then
+            cp -r apps/web/public release_staging/apps/web/
+          fi
+          cp apps/web/package.json release_staging/apps/web/
+          if [ -f apps/web/next.config.mjs ]; then
+            cp apps/web/next.config.mjs release_staging/apps/web/
+          elif [ -f apps/web/next.config.js ]; then
+            cp apps/web/next.config.js release_staging/apps/web/
+          fi
+
+          npm prune --omit=dev
+          
+          cp -r node_modules release_staging/
+
+          cd release_staging
+          tar -czf ../czns-release.tar.gz .
+          cd ..
+          ls -lh czns-release.tar.gz
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest
+          name: "CZNS Production Release"
+          draft: false
+          prerelease: false
+          files: czns-release.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Trigger cPanel Deployment Webhook
+        run: |
+          echo "🚀 Triggering deployment webhook on czns.newquettaautos.com..."
+          DEPLOY_RESPONSE=$(curl -s -w "\nHTTP_STATUS:%{http_code}" -X POST \
+            "https://czns.newquettaautos.com/deploy.php?secret=czns_deploy_key_2026_a9b8c7")
+          
+          echo "Server Response:"
+          echo "$DEPLOY_RESPONSE"
+          
+          HTTP_STATUS=$(echo "$DEPLOY_RESPONSE" | grep "HTTP_STATUS" | cut -d':' -f2)
+          if [ "$HTTP_STATUS" -ne 200 ]; then
+            echo "❌ Deployment webhook failed with HTTP $HTTP_STATUS"
+            exit 1
+          fi
+          echo "✅ Release successfully extracted and Passenger restarted on cPanel!"
+
+      - name: Verify Live Website Status
+        run: |
+          echo "🔍 Verifying live storefront health..."
+          sleep 4
+          curl -f -s -I "https://czns.newquettaautos.com/" || exit 1
+          echo "✅ https://czns.newquettaautos.com is live and responding with 200 OK!"

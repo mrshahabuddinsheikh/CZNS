@@ -170,4 +170,208 @@ export async function marketingRoutes(fastify: FastifyInstance) {
       return { success: true, reviewId };
     }
   );
+
+  // 6. Get Active Deal of the Day (Public)
+  fastify.get('/api/v1/deals/today', async () => {
+    let deal: any = db.prepare(`
+      SELECT 
+        d.*,
+        p.name as product_name,
+        p.slug as product_slug,
+        p.thumbnail,
+        p.is_used,
+        p.condition_grade,
+        p.pta_status,
+        p.battery_health,
+        b.name as brand_name,
+        (SELECT GROUP_CONCAT(DISTINCT storage) FROM product_variants WHERE product_id = p.id) as storages,
+        (SELECT GROUP_CONCAT(DISTINCT color_name) FROM product_variants WHERE product_id = p.id) as colors,
+        (SELECT id FROM product_variants WHERE product_id = p.id ORDER BY price ASC LIMIT 1) as default_variant_id
+      FROM deal_of_the_day d
+      LEFT JOIN products p ON d.product_id = p.id
+      LEFT JOIN brands b ON p.brand_id = b.id
+      WHERE d.is_active = 1
+      ORDER BY d.created_at DESC
+      LIMIT 1
+    `).get();
+
+    // Auto-create initial 24h deal if none exists
+    if (!deal) {
+      const topProd: any = db.prepare(`
+        SELECT p.*, 
+          (SELECT MIN(price) FROM product_variants WHERE product_id = p.id) as min_price,
+          (SELECT regular_price FROM product_variants WHERE product_id = p.id ORDER BY price ASC LIMIT 1) as regular_price
+        FROM products p
+        WHERE p.slug = 'apple-iphone-17-pro-256gb' OR p.slug LIKE '%iphone-15%' OR p.featured = 1
+        LIMIT 1
+      `).get();
+
+      if (topProd) {
+        const now = new Date();
+        const endTime = new Date(now.getTime() + 24 * 60 * 60 * 1000); // 24 hours from now
+        const dealId = `deal-${nanoid(8)}`;
+        const regP = topProd.regular_price || topProd.min_price || 447000;
+        const dealP = Math.floor(topProd.min_price * 0.92); // 8% special flash deal
+
+        db.prepare(`
+          INSERT INTO deal_of_the_day (
+            id, product_id, title, deal_price, regular_price, start_time, end_time,
+            stock_total, stock_claimed, is_sold_out, is_active, badge_text
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?)
+        `).run(
+          dealId,
+          topProd.id,
+          `⚡ 24-HOUR FLASH DEAL: ${topProd.name}`,
+          dealP,
+          regP,
+          now.toISOString(),
+          endTime.toISOString(),
+          5,
+          2,
+          0,
+          'LIMITED 24H FLASH DEAL'
+        );
+
+        deal = db.prepare(`
+          SELECT 
+            d.*,
+            p.name as product_name,
+            p.slug as product_slug,
+            p.thumbnail,
+            p.is_used,
+            p.condition_grade,
+            p.pta_status,
+            p.battery_health,
+            b.name as brand_name,
+            (SELECT GROUP_CONCAT(DISTINCT storage) FROM product_variants WHERE product_id = p.id) as storages,
+            (SELECT GROUP_CONCAT(DISTINCT color_name) FROM product_variants WHERE product_id = p.id) as colors,
+            (SELECT id FROM product_variants WHERE product_id = p.id ORDER BY price ASC LIMIT 1) as default_variant_id
+          FROM deal_of_the_day d
+          LEFT JOIN products p ON d.product_id = p.id
+          LEFT JOIN brands b ON p.brand_id = b.id
+          WHERE d.id = ?
+        `).get(dealId);
+      }
+    }
+
+    if (!deal) {
+      return { deal: null };
+    }
+
+    const endMs = new Date(deal.end_time).getTime();
+    const nowMs = Date.now();
+    const secondsRemaining = Math.max(0, Math.floor((endMs - nowMs) / 1000));
+    const isExpired = secondsRemaining <= 0;
+
+    return {
+      deal: {
+        ...deal,
+        seconds_remaining: secondsRemaining,
+        is_expired: isExpired,
+        storages: deal.storages ? deal.storages.split(',') : ['128GB'],
+        colors: deal.colors ? deal.colors.split(',') : ['Standard'],
+      },
+    };
+  });
+
+  // 7. Admin Manage Deal of the Day
+  fastify.post<{
+    Body: {
+      product_id: string;
+      title?: string;
+      deal_price: number;
+      regular_price?: number;
+      duration_hours?: number;
+      stock_total?: number;
+      stock_claimed?: number;
+      is_sold_out?: number;
+      badge_text?: string;
+    };
+  }>('/api/v1/admin/deals/today', async (request, reply) => {
+    const {
+      product_id,
+      title,
+      deal_price,
+      regular_price,
+      duration_hours = 24,
+      stock_total = 5,
+      stock_claimed = 0,
+      is_sold_out = 0,
+      badge_text = 'LIMITED 24H FLASH DEAL',
+    } = request.body || {};
+
+    if (!product_id || !deal_price) {
+      return reply.status(400).send({ error: 'Product and Deal Price are required' });
+    }
+
+    const prod: any = db.prepare('SELECT * FROM products WHERE id = ?').get(product_id);
+    if (!prod) {
+      return reply.status(404).send({ error: 'Product not found' });
+    }
+
+    const now = new Date();
+    const endTime = new Date(now.getTime() + duration_hours * 60 * 60 * 1000);
+    const dealId = `deal-${nanoid(8)}`;
+    const finalTitle = title || `⚡ 24-HOUR FLASH DEAL: ${prod.name}`;
+
+    // Deactivate previous active deals
+    db.prepare('UPDATE deal_of_the_day SET is_active = 0').run();
+
+    db.prepare(`
+      INSERT INTO deal_of_the_day (
+        id, product_id, title, deal_price, regular_price, start_time, end_time,
+        stock_total, stock_claimed, is_sold_out, is_active, badge_text
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?)
+    `).run(
+      dealId,
+      product_id,
+      finalTitle,
+      deal_price,
+      regular_price || deal_price + 25000,
+      now.toISOString(),
+      endTime.toISOString(),
+      stock_total,
+      stock_claimed,
+      is_sold_out,
+      badge_text
+    );
+
+    return { success: true, dealId };
+  });
+
+  // 8. Admin Toggle Sold Out on Deal of the Day
+  fastify.post<{ Body: { is_sold_out: number } }>(
+    '/api/v1/admin/deals/today/toggle-sold-out',
+    async (request) => {
+      const { is_sold_out } = request.body || {};
+      const activeDeal: any = db.prepare('SELECT id, is_sold_out FROM deal_of_the_day WHERE is_active = 1 LIMIT 1').get();
+
+      if (activeDeal) {
+        const newVal = typeof is_sold_out === 'number' ? is_sold_out : (activeDeal.is_sold_out === 1 ? 0 : 1);
+        db.prepare('UPDATE deal_of_the_day SET is_sold_out = ? WHERE id = ?').run(newVal, activeDeal.id);
+        return { success: true, is_sold_out: newVal };
+      }
+
+      return { success: false, error: 'No active deal found' };
+    }
+  );
+
+  // 9. Admin Reset 24-Hour Timer
+  fastify.post('/api/v1/admin/deals/today/reset-timer', async () => {
+    const activeDeal: any = db.prepare('SELECT id FROM deal_of_the_day WHERE is_active = 1 LIMIT 1').get();
+
+    if (activeDeal) {
+      const now = new Date();
+      const endTime = new Date(now.getTime() + 24 * 60 * 60 * 1000); // 24 hours from now
+      db.prepare(`
+        UPDATE deal_of_the_day 
+        SET start_time = ?, end_time = ?, is_sold_out = 0
+        WHERE id = ?
+      `).run(now.toISOString(), endTime.toISOString(), activeDeal.id);
+
+      return { success: true, end_time: endTime.toISOString() };
+    }
+
+    return { success: false, error: 'No active deal found' };
+  });
 }
