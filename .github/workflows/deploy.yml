@@ -35,6 +35,7 @@ jobs:
         run: npm run build:web
         env:
           NODE_ENV: production
+          NEXT_PUBLIC_API_URL: ''
           NEXT_TELEMETRY_DISABLED: 1
 
       - name: Prepare Clean Production Bundle
@@ -69,12 +70,6 @@ jobs:
             cp apps/web/next.config.js release_staging/apps/web/
           fi
 
-          # Prune devDependencies to keep production bundle minimal
-          npm prune --omit=dev
-          rm -rf node_modules/.cache
-          
-          cp -r node_modules release_staging/
-
           cd release_staging
           tar -czf ../czns-release.tar.gz .
           cd ..
@@ -94,7 +89,7 @@ jobs:
       - name: Trigger cPanel Deployment Webhook
         run: |
           echo "🚀 Triggering deployment webhook on czns.newquettaautos.com..."
-          DEPLOY_RESPONSE=$(curl -s --max-time 300 -w "\nHTTP_STATUS:%{http_code}" -X POST \
+          DEPLOY_RESPONSE=$(curl -s --max-time 120 -w "\nHTTP_STATUS:%{http_code}" -X POST \
             "https://czns.newquettaautos.com/deploy.php?secret=czns_deploy_key_2026_a9b8c7")
           
           echo "Server Response:"
@@ -110,6 +105,6 @@ jobs:
       - name: Verify Live Website Status
         run: |
           echo "🔍 Verifying live storefront health..."
-          sleep 6
+          sleep 5
           curl -f -s -I "https://czns.newquettaautos.com/" || true
           echo "✅ Pipeline completed successfully!"

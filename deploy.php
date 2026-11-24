@@ -7,8 +7,8 @@
  */
 
 // Prevent timeout
-set_time_limit(600);
-ini_set('max_execution_time', '600');
+set_time_limit(300);
+ini_set('max_execution_time', '300');
 ignore_user_abort(true);
 
 // Deployment Security Token (shared between GitHub Actions secret and this webhook)
@@ -27,14 +27,6 @@ $startTime = microtime(true);
 $baseDir = __DIR__;
 $tarFile = $baseDir . '/czns-release.tar.gz';
 $releaseUrl = $_REQUEST['url'] ?? 'https://github.com/mrshahabuddinsheikh/CZNS/releases/download/latest/czns-release.tar.gz';
-
-// Optional: preserve live SQLite database before extraction if already exists
-$dbDir = $baseDir . '/apps/api/data';
-$liveDb = $dbDir . '/czns.sqlite';
-$backupDb = $baseDir . '/data_backup_live.sqlite';
-if (file_exists($liveDb)) {
-    copy($liveDb, $backupDb);
-}
 
 // 1. Download release tarball via system curl (handles 302 redirects & SSL reliably)
 $dlCmd = 'curl -s -L -k -o ' . escapeshellarg($tarFile) . ' ' . escapeshellarg($releaseUrl) . ' 2>&1';
@@ -78,16 +70,6 @@ if ($returnCode !== 0) {
         'code' => $returnCode,
     ]);
     exit;
-}
-
-// Restore live database if backup was created and new one was empty or older
-if (file_exists($backupDb)) {
-    if (!file_exists($liveDb) || filesize($liveDb) < filesize($backupDb)) {
-        if (!is_dir($dbDir)) {
-            mkdir($dbDir, 0755, true);
-        }
-        copy($backupDb, $liveDb);
-    }
 }
 
 // 3. Touch Phusion Passenger restart.txt

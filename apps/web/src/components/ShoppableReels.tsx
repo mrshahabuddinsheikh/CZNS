@@ -157,7 +157,7 @@ export default function ShoppableReels() {
             <div className="absolute top-3 left-3 right-3 flex items-center justify-between text-[11px] text-white">
               <span className="flex items-center gap-1 bg-black/40 backdrop-blur-md px-2 py-0.5 rounded-full font-medium">
                 <Eye className="w-3 h-3" />
-                {reel.views.toLocaleString()}
+                {(reel.views ?? 0).toLocaleString()}
               </span>
 
               <button
@@ -169,7 +169,7 @@ export default function ShoppableReels() {
                 }`}
               >
                 <Heart className={`w-3 h-3 ${hasLiked[reel.id] ? 'fill-white' : ''}`} />
-                {likesCount[reel.id] || reel.likes}
+                {likesCount[reel.id] ?? reel.likes ?? 0}
               </button>
             </div>
 

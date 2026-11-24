@@ -19,7 +19,7 @@ const nextConfig = {
     ],
   },
   env: {
-    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000',
+    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || '',
     NEXT_PUBLIC_STORE_NAME: 'CZNS',
     NEXT_PUBLIC_STORE_PHONE: '+923001234567',
   },
