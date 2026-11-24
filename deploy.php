@@ -6,6 +6,11 @@
  * Triggered by GitHub Actions on successful release publication.
  */
 
+// Prevent timeout
+set_time_limit(600);
+ini_set('max_execution_time', '600');
+ignore_user_abort(true);
+
 // Deployment Security Token (shared between GitHub Actions secret and this webhook)
 define('DEPLOY_SECRET', 'czns_deploy_key_2026_a9b8c7');
 
