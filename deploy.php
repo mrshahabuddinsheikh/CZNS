@@ -36,33 +36,23 @@ if (file_exists($liveDb)) {
     copy($liveDb, $backupDb);
 }
 
-// 1. Download release tarball
-$ch = curl_init($releaseUrl);
-$fp = fopen($tarFile, 'wb');
-curl_setopt_array($ch, [
-    CURLOPT_FILE => $fp,
-    CURLOPT_HEADER => 0,
-    CURLOPT_FOLLOWLOCATION => true,
-    CURLOPT_MAXREDIRS => 5,
-    CURLOPT_TIMEOUT => 300,
-    CURLOPT_SSL_VERIFYPEER => false,
-    CURLOPT_USERAGENT => 'CZNS-cPanel-Deployer/1.0',
-]);
+// 1. Download release tarball via system curl (handles 302 redirects & SSL reliably)
+$dlCmd = 'curl -s -L -k -o ' . escapeshellarg($tarFile) . ' ' . escapeshellarg($releaseUrl) . ' 2>&1';
+$dlOutput = [];
+$dlRet = 0;
+exec($dlCmd, $dlOutput, $dlRet);
 
-$curlSuccess = curl_exec($ch);
-$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-$curlError = curl_error($ch);
-curl_close($ch);
-fclose($fp);
+clearstatcache(true, $tarFile);
+$fileSize = file_exists($tarFile) ? filesize($tarFile) : 0;
 
-if (!$curlSuccess || $httpCode >= 400 || !file_exists($tarFile) || filesize($tarFile) < 1000) {
+if ($dlRet !== 0 || !file_exists($tarFile) || $fileSize < 1000) {
     http_response_code(500);
     echo json_encode([
         'success' => false,
         'error' => 'Failed to download release tarball',
-        'http_code' => $httpCode,
-        'curl_error' => $curlError,
-        'filesize' => file_exists($tarFile) ? filesize($tarFile) : 0,
+        'curl_exit_code' => $dlRet,
+        'curl_output' => implode("\n", $dlOutput),
+        'filesize' => $fileSize,
     ]);
     if (file_exists($tarFile)) unlink($tarFile);
     exit;
@@ -116,4 +106,5 @@ echo json_encode([
     'duration_seconds' => $duration,
     'timestamp' => date('c'),
     'restart_file' => $restartFile,
+    'download_size' => $fileSize,
 ]);

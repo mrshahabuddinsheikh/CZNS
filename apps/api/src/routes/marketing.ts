@@ -1,6 +1,6 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { db } from '../db/index.js';
-import { nanoid } from 'nanoid';
+import { nanoid } from '../utils/id.js';
 
 export async function marketingRoutes(fastify: FastifyInstance) {
   // 1. Get Shoppable Reels

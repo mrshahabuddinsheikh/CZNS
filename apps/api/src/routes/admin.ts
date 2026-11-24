@@ -2,7 +2,7 @@ import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { db } from '../db/index.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { nanoid } from 'nanoid';
+import { nanoid } from '../utils/id.js';
 import fs from 'fs';
 import path from 'path';
 
