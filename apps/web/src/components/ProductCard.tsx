@@ -136,7 +136,7 @@ export default function ProductCard({ product, viewMode = 'grid' }: ProductCardP
             </div>
 
             <Link href={`/phone/${product.slug}`} className="block mt-1">
-              <h3 className="font-bold text-slate-900 text-sm sm:text-base leading-snug group-hover:text-emerald-700 transition-colors">
+              <h3 className="font-bold text-slate-900 text-sm sm:text-base leading-snug group-hover:text-[#7e0119] transition-colors">
                 {product.name}
               </h3>
             </Link>
@@ -146,7 +146,7 @@ export default function ProductCard({ product, viewMode = 'grid' }: ProductCardP
               <span className="font-semibold text-slate-800 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200">
                 {storage}
               </span>
-              <span className="text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
+              <span className="text-[#7e0119] font-bold bg-rose-50 px-2 py-0.5 rounded-md border border-rose-200">
                 {product.pta_status || 'Official PTA Approved'}
               </span>
               {isUsed && product.battery_health && (
@@ -170,17 +170,17 @@ export default function ProductCard({ product, viewMode = 'grid' }: ProductCardP
             <div className="flex items-center gap-2">
               <button
                 onClick={handleWhatsAppChat}
-                className="py-1.5 px-3 rounded-lg bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 text-emerald-800 font-bold text-xs flex items-center gap-1 transition-all"
+                className="py-1.5 px-3 rounded-lg bg-rose-50 hover:bg-rose-100 border border-rose-200 text-[#7e0119] font-bold text-xs flex items-center gap-1 transition-all"
               >
-                <PhoneCall className="w-3.5 h-3.5 text-emerald-600" />
+                <PhoneCall className="w-3.5 h-3.5 text-[#7e0119]" />
                 <span>Chat</span>
               </button>
 
               <button
                 onClick={handleQuickBuy}
-                className="py-1.5 px-4 rounded-lg bg-[#002f34] hover:bg-emerald-700 text-white font-extrabold text-xs flex items-center gap-1 shadow-xs transition-all active:scale-95"
+                className="py-1.5 px-4 rounded-lg bg-[#7e0119] hover:bg-[#610012] text-white font-extrabold text-xs flex items-center gap-1 shadow-xs transition-all active:scale-95"
               >
-                <Zap className="w-3.5 h-3.5 fill-[#ffce32] text-[#ffce32]" />
+                <Zap className="w-3.5 h-3.5 fill-amber-300 text-amber-300" />
                 <span>Buy Now</span>
               </button>
             </div>
@@ -220,7 +220,7 @@ export default function ProductCard({ product, viewMode = 'grid' }: ProductCardP
               {getDisplayCondition(product.condition_grade, true)}
             </span>
           ) : (
-            <span className="bg-emerald-100 text-emerald-900 border border-emerald-300 text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded-xs">
+            <span className="bg-rose-100 text-[#7e0119] border border-rose-300 text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded-xs">
               Brand New
             </span>
           )}
@@ -241,8 +241,8 @@ export default function ProductCard({ product, viewMode = 'grid' }: ProductCardP
 
         {/* Battery Health on Used Phones */}
         {isUsed && product.battery_health && (
-          <div className="absolute bottom-2 left-2 bg-white/95 text-[#002f34] border border-slate-200 text-[10px] font-black px-1.5 py-0.5 rounded-xs shadow-xs flex items-center gap-1">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+          <div className="absolute bottom-2 left-2 bg-white/95 text-slate-900 border border-slate-200 text-[10px] font-black px-1.5 py-0.5 rounded-xs shadow-xs flex items-center gap-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#7e0119]" />
             <span>🔋 {product.battery_health}%</span>
           </div>
         )}
@@ -270,7 +270,7 @@ export default function ProductCard({ product, viewMode = 'grid' }: ProductCardP
 
           {/* Title */}
           <Link href={`/phone/${product.slug}`} className="block mt-1">
-            <h3 className="font-semibold text-slate-800 text-xs sm:text-sm leading-snug line-clamp-1 group-hover:text-emerald-700 transition-colors">
+            <h3 className="font-semibold text-slate-800 text-xs sm:text-sm leading-snug line-clamp-1 group-hover:text-[#7e0119] transition-colors">
               {product.name}
             </h3>
           </Link>
@@ -279,7 +279,7 @@ export default function ProductCard({ product, viewMode = 'grid' }: ProductCardP
           <div className="flex items-center gap-1.5 text-[11px] text-slate-500 mt-1">
             <span className="font-medium text-slate-700">{storage}</span>
             <span>•</span>
-            <span className="text-emerald-700 font-bold">{product.pta_status || 'Official PTA'}</span>
+            <span className="text-[#7e0119] font-bold">{product.pta_status || 'Official PTA'}</span>
             <span>•</span>
             <span>{isUsed ? '7-Day War' : '1-Yr War'}</span>
           </div>
@@ -298,17 +298,17 @@ export default function ProductCard({ product, viewMode = 'grid' }: ProductCardP
           <div className="grid grid-cols-2 gap-1.5 pt-1">
             <button
               onClick={handleWhatsAppChat}
-              className="py-1.5 px-2 rounded-lg bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 text-emerald-800 font-bold text-[11px] flex items-center justify-center gap-1 transition-all active:scale-95 cursor-pointer"
+              className="py-1.5 px-2 rounded-lg bg-rose-50 hover:bg-rose-100 border border-rose-200 text-[#7e0119] font-bold text-[11px] flex items-center justify-center gap-1 transition-all active:scale-95 cursor-pointer"
             >
-              <PhoneCall className="w-3 h-3 text-emerald-600" />
+              <PhoneCall className="w-3 h-3 text-[#7e0119]" />
               <span>Chat</span>
             </button>
 
             <button
               onClick={handleQuickBuy}
-              className="py-1.5 px-2 rounded-lg bg-[#002f34] hover:bg-emerald-700 text-white font-extrabold text-[11px] flex items-center justify-center gap-1 shadow-xs transition-all active:scale-95 cursor-pointer"
+              className="py-1.5 px-2 rounded-lg bg-[#7e0119] hover:bg-[#610012] text-white font-extrabold text-[11px] flex items-center justify-center gap-1 shadow-xs transition-all active:scale-95 cursor-pointer"
             >
-              <Zap className="w-3 h-3 fill-[#ffce32] text-[#ffce32]" />
+              <Zap className="w-3 h-3 fill-amber-300 text-amber-300" />
               <span>Buy Now</span>
             </button>
           </div>

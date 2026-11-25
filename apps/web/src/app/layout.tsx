@@ -40,21 +40,21 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
       <body
-        className={`${inter.variable} font-sans bg-[#f7f8f9] text-slate-900 min-h-screen flex flex-col antialiased selection:bg-emerald-500 selection:text-white relative`}
+        className={`${inter.variable} font-sans bg-[#f7f8f9] text-slate-900 min-h-screen flex flex-col antialiased selection:bg-[#7e0119] selection:text-white relative`}
       >
         {/* Modern Dot Matrix Grid Pattern & Floating Ambient Lighting Orbs */}
         <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
           {/* Subtle Cyber / Grid Dot Pattern */}
-          <div className="absolute inset-0 bg-[radial-gradient(#002f3412_1px,transparent_1px)] [background-size:22px_22px] opacity-75" />
+          <div className="absolute inset-0 bg-[radial-gradient(#7e011915_1px,transparent_1px)] [background-size:22px_22px] opacity-75" />
 
-          {/* Floating Glow Lights */}
+          {/* Floating Glow Lights matching Brand Crimson */}
           <div
-            className="absolute -top-32 -left-20 w-[650px] h-[650px] rounded-full blur-[140px] opacity-40 animate-pulse transition-colors duration-1000 bg-emerald-400/25"
+            className="absolute -top-32 -left-20 w-[650px] h-[650px] rounded-full blur-[140px] opacity-40 animate-pulse transition-colors duration-1000 bg-[#7e0119]/25"
           />
-          <div className="absolute top-40 right-[-100px] w-[700px] h-[700px] bg-teal-300/20 rounded-full blur-[150px] animate-float-slow" />
+          <div className="absolute top-40 right-[-100px] w-[700px] h-[700px] bg-rose-400/15 rounded-full blur-[150px] animate-float-slow" />
           <div className="absolute top-[45%] left-[15%] w-[550px] h-[550px] bg-amber-200/20 rounded-full blur-[140px] animate-float-reverse" />
           <div
-            className="absolute bottom-20 right-[15%] w-[750px] h-[750px] rounded-full blur-[160px] opacity-40 bg-emerald-300/20 animate-pulse"
+            className="absolute bottom-20 right-[15%] w-[750px] h-[750px] rounded-full blur-[160px] opacity-40 bg-[#7e0119]/20 animate-pulse"
           />
         </div>
 

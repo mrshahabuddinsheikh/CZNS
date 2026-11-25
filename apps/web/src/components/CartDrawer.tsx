@@ -221,7 +221,7 @@ export default function CartDrawer() {
                     </div>
                     <div className="flex justify-between text-base font-black text-white pt-1 border-t border-white/10">
                       <span>Total Amount</span>
-                      <span className="text-emerald-400 font-mono">{formatPKR(subtotal)}</span>
+                      <span className="text-rose-400 font-mono">{formatPKR(subtotal)}</span>
                     </div>
                   </div>
 
@@ -229,7 +229,7 @@ export default function CartDrawer() {
                   <div className="space-y-2">
                     <button
                       onClick={handleCheckoutClick}
-                      className="w-full flex items-center justify-center gap-2 py-3 rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs sm:text-sm font-black shadow-lg transition-all cursor-pointer active:scale-95"
+                      className="w-full flex items-center justify-center gap-2 py-3 rounded-full bg-[#7e0119] hover:bg-[#9c0f2b] text-white text-xs sm:text-sm font-black shadow-lg transition-all cursor-pointer active:scale-95"
                     >
                       <span>Proceed to Secure Checkout</span>
                       <ArrowRight className="w-4 h-4" />
@@ -239,7 +239,7 @@ export default function CartDrawer() {
                       onClick={handleWhatsAppCheckout}
                       className="w-full flex items-center justify-center gap-2 py-2.5 rounded-full bg-white/10 hover:bg-white/15 text-white text-xs font-bold border border-white/15 transition-colors cursor-pointer"
                     >
-                      <PhoneCall className="w-4 h-4 text-emerald-400" />
+                      <PhoneCall className="w-4 h-4 text-rose-400" />
                       <span>Order Directly on WhatsApp</span>
                     </button>
                   </div>

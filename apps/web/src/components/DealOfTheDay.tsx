@@ -136,12 +136,12 @@ export default function DealOfTheDaySection() {
                 {deal.stock_total - deal.stock_claimed} Units Remaining
               </span>
               <span className="text-slate-300">•</span>
-              <span className="text-xs font-bold text-emerald-700">Karachi COD Available</span>
+              <span className="text-xs font-bold text-[#7e0119]">Karachi COD Available</span>
             </div>
 
             {/* Title */}
             <div>
-              <Link href={`/phone/${deal.product_slug || 'deal'}`} className="hover:text-emerald-700 transition-colors">
+              <Link href={`/phone/${deal.product_slug || 'deal'}`} className="hover:text-[#7e0119] transition-colors">
                 <h2 className="text-xl sm:text-3xl font-black text-slate-900 tracking-tight leading-snug">
                   {deal.product_name || deal.title}
                 </h2>
@@ -154,7 +154,7 @@ export default function DealOfTheDaySection() {
               <div>
                 <div className="text-[10px] uppercase font-bold text-slate-400">Flash Price</div>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-2xl sm:text-3xl font-black text-emerald-600 font-mono tracking-tight">
+                  <span className="text-2xl sm:text-3xl font-black text-[#7e0119] font-mono tracking-tight">
                     {formatPKR(price)}
                   </span>
                   {regularPrice > price && (
@@ -163,7 +163,7 @@ export default function DealOfTheDaySection() {
                     </span>
                   )}
                   {discountPercent > 0 && (
-                    <span className="text-[10px] font-black bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full">
+                    <span className="text-[10px] font-black bg-rose-100 text-[#7e0119] px-2 py-0.5 rounded-full">
                       {discountPercent}% OFF
                     </span>
                   )}
@@ -194,7 +194,7 @@ export default function DealOfTheDaySection() {
               <button
                 onClick={handleInstantBuy}
                 disabled={isExpired || isSoldOut}
-                className="px-6 py-3 rounded-xl bg-slate-900 hover:bg-emerald-600 text-white font-extrabold text-xs sm:text-sm shadow-md transition-all flex items-center gap-2 active:scale-95 disabled:opacity-50 cursor-pointer"
+                className="px-6 py-3 rounded-xl bg-[#7e0119] hover:bg-[#610012] text-white font-extrabold text-xs sm:text-sm shadow-md transition-all flex items-center gap-2 active:scale-95 disabled:opacity-50 cursor-pointer"
               >
                 <Zap className="w-4 h-4 fill-amber-300 text-amber-300" />
                 <span>Buy Flash Deal Now</span>
@@ -206,7 +206,7 @@ export default function DealOfTheDaySection() {
                 rel="noopener noreferrer"
                 className="px-5 py-3 rounded-xl bg-white hover:bg-slate-50 text-slate-800 font-bold text-xs sm:text-sm border border-slate-300 shadow-xs transition-all flex items-center gap-2 active:scale-95 cursor-pointer"
               >
-                <PhoneCall className="w-4 h-4 text-emerald-600" />
+                <PhoneCall className="w-4 h-4 text-[#7e0119]" />
                 <span>WhatsApp Claim</span>
               </a>
             </div>

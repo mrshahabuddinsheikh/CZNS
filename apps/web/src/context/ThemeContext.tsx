@@ -28,8 +28,16 @@ export interface FontPairPreset {
 
 export const THEME_PRESETS: ThemePreset[] = [
   {
+    id: 'czns-crimson',
+    name: "CZN'S Brand Crimson Burgundy (Official)",
+    hex: '#7e0119',
+    hover: '#610012',
+    rgb: '126, 1, 25',
+    description: "Official CZN'S trademark deep burgundy crimson styling from official brand identity",
+  },
+  {
     id: 'emerald',
-    name: 'Emerald Mint (Default)',
+    name: 'Emerald Mint',
     hex: '#10b981',
     hover: '#059669',
     rgb: '16, 185, 129',
@@ -165,8 +173,8 @@ interface ThemeContextType {
 }
 
 const ThemeContext = createContext<ThemeContextType>({
-  primaryColor: '#10b981',
-  accentPreset: 'emerald',
+  primaryColor: '#7e0119',
+  accentPreset: 'czns-crimson',
   primaryFont: 'Inter',
   secondaryFont: 'Plus Jakarta Sans',
   updateThemeColor: async () => false,
@@ -190,7 +198,7 @@ function hexToRgb(hex: string): string {
     const b = parseInt(clean.substring(4, 6), 16);
     return `${r}, ${g}, ${b}`;
   }
-  return '16, 185, 129';
+  return '126, 1, 25';
 }
 
 function applyThemeVariables(hex: string) {
@@ -232,8 +240,8 @@ function applyFontVariables(primary: string, secondary: string) {
 }
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [primaryColor, setPrimaryColor] = useState<string>('#10b981');
-  const [accentPreset, setAccentPreset] = useState<string>('emerald');
+  const [primaryColor, setPrimaryColor] = useState<string>('#7e0119');
+  const [accentPreset, setAccentPreset] = useState<string>('czns-crimson');
   const [primaryFont, setPrimaryFont] = useState<string>('Inter');
   const [secondaryFont, setSecondaryFont] = useState<string>('Plus Jakarta Sans');
 

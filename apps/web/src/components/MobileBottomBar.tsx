@@ -25,13 +25,13 @@ export default function MobileBottomBar() {
   return (
     <nav
       aria-label="Mobile Navigation Bar"
-      className="md:hidden fixed bottom-0 inset-x-0 z-40 backdrop-blur-2xl bg-white/92 border-t border-slate-200/90 shadow-[0_-8px_25px_rgba(0,0,0,0.06)] px-2 py-1.5 flex items-center justify-around text-slate-700 select-none"
+      className="md:hidden fixed bottom-0 inset-x-0 z-40 backdrop-blur-2xl bg-white/94 border-t border-slate-200/90 shadow-[0_-8px_25px_rgba(0,0,0,0.06)] px-2 py-1.5 flex items-center justify-around text-slate-700 select-none"
     >
       {/* 1. Home */}
       <Link
         href="/"
         className={`flex flex-col items-center justify-center flex-1 py-1 text-center transition-colors ${
-          pathname === '/' ? 'text-emerald-700 font-extrabold' : 'text-slate-500 hover:text-slate-800'
+          pathname === '/' ? 'text-[#7e0119] font-extrabold' : 'text-slate-500 hover:text-slate-800'
         }`}
       >
         <Home className="w-5 h-5 mb-0.5" />
@@ -43,24 +43,24 @@ export default function MobileBottomBar() {
         href="https://wa.me/923001234567"
         target="_blank"
         rel="noopener noreferrer"
-        className="flex flex-col items-center justify-center flex-1 py-1 text-center text-slate-500 hover:text-emerald-700 transition-colors"
+        className="flex flex-col items-center justify-center flex-1 py-1 text-center text-slate-500 hover:text-[#7e0119] transition-colors"
       >
         <div className="relative">
           <MessageSquare className="w-5 h-5 mb-0.5" />
-          <span className="absolute top-0 right-0 w-2 h-2 rounded-full bg-emerald-500" />
+          <span className="absolute top-0 right-0 w-2 h-2 rounded-full bg-[#7e0119]" />
         </div>
         <span className="text-[10px] tracking-tight uppercase">Chats</span>
       </a>
 
-      {/* 3. The Elevated Center "BUY" Button (Replaces SELL, opens /shop) */}
-      <div className="flex flex-col items-center justify-center flex-1 -mt-5">
+      {/* 3. The Elevated Center "BUY" Button (Fixed sizing, elevation & brand crimson color) */}
+      <div className="flex flex-col items-center justify-center flex-1 -mt-6">
         <button
           onClick={() => router.push('/shop')}
-          className="w-13 h-13 rounded-full bg-gradient-to-tr from-emerald-600 to-teal-500 text-white shadow-[0_8px_22px_rgba(16,185,129,0.45)] border-3 border-white flex flex-col items-center justify-center active:scale-90 transition-transform cursor-pointer"
+          className="w-14 h-14 rounded-full bg-gradient-to-tr from-[#7e0119] via-[#940826] to-[#b31438] text-white shadow-[0_10px_25px_-3px_rgba(126,1,25,0.48)] border-[3.5px] border-white flex flex-col items-center justify-center active:scale-90 transition-all cursor-pointer group"
           aria-label="Buy Smartphones / Open Shop"
         >
-          <Zap className="w-5 h-5 fill-amber-300 text-amber-300" />
-          <span className="text-[9px] font-black tracking-wider text-white -mt-0.5 uppercase">
+          <Zap className="w-5 h-5 fill-amber-300 text-amber-300 group-hover:scale-110 transition-transform" />
+          <span className="text-[10px] font-black tracking-wider text-white -mt-0.5 uppercase drop-shadow-xs">
             BUY
           </span>
         </button>
@@ -69,12 +69,12 @@ export default function MobileBottomBar() {
       {/* 4. My Bag */}
       <button
         onClick={() => setIsCartOpen(true)}
-        className="flex flex-col items-center justify-center flex-1 py-1 text-center text-slate-500 hover:text-emerald-700 transition-colors cursor-pointer"
+        className="flex flex-col items-center justify-center flex-1 py-1 text-center text-slate-500 hover:text-[#7e0119] transition-colors cursor-pointer"
       >
         <div className="relative">
           <ShoppingBag className="w-5 h-5 mb-0.5" />
           {totalItems > 0 && (
-            <span className="absolute -top-1 -right-2 bg-amber-400 text-slate-950 font-black text-[9px] w-4 h-4 rounded-full flex items-center justify-center border border-white">
+            <span className="absolute -top-1 -right-2 bg-[#7e0119] text-white font-black text-[9px] w-4 h-4 rounded-full flex items-center justify-center border border-white">
               {totalItems}
             </span>
           )}
@@ -85,7 +85,7 @@ export default function MobileBottomBar() {
       {/* 5. Shoppable Reels (Replaces Account as requested) */}
       <button
         onClick={handleOpenReels}
-        className="flex flex-col items-center justify-center flex-1 py-1 text-center text-slate-500 hover:text-pink-600 transition-colors cursor-pointer"
+        className="flex flex-col items-center justify-center flex-1 py-1 text-center text-slate-500 hover:text-[#7e0119] transition-colors cursor-pointer"
         aria-label="Watch Shoppable Reels"
       >
         <Film className="w-5 h-5 mb-0.5" />

@@ -87,16 +87,16 @@ export default function Header() {
               onClick={() => handleSelectMode('new')}
               className={`flex items-center gap-1 sm:gap-2 px-2.5 sm:px-5 py-1.5 sm:py-2.5 rounded-full text-[11px] sm:text-sm font-extrabold transition-all duration-300 cursor-pointer ${
                 currentMode === 'new'
-                  ? 'bg-emerald-600 text-white shadow-[0_4px_16px_rgba(16,185,129,0.35)] scale-102 ring-2 ring-emerald-400/40'
-                  : 'bg-white/80 hover:bg-emerald-50 text-slate-800 border border-slate-200/90 hover:border-emerald-300 shadow-xs'
+                  ? 'bg-[#7e0119] text-white shadow-[0_4px_16px_rgba(126,1,25,0.35)] scale-102 ring-2 ring-[#7e0119]/40'
+                  : 'bg-white/80 hover:bg-rose-50 text-slate-800 border border-slate-200/90 hover:border-[#7e0119]/40 shadow-xs'
               }`}
             >
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-              <Sparkles className={`w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0 ${currentMode === 'new' ? 'text-white' : 'text-emerald-600'}`} />
+              <span className="w-1.5 h-1.5 rounded-full bg-rose-400 animate-pulse shrink-0" />
+              <Sparkles className={`w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0 ${currentMode === 'new' ? 'text-white' : 'text-[#7e0119]'}`} />
               <span className="whitespace-nowrap">New</span>
               <span className="hidden xs:inline whitespace-nowrap">Phone</span>
               <span className={`hidden md:inline text-[10px] uppercase font-bold px-1.5 py-0.5 rounded-md ${
-                currentMode === 'new' ? 'bg-white/20 text-white' : 'bg-emerald-100 text-emerald-800'
+                currentMode === 'new' ? 'bg-white/20 text-white' : 'bg-rose-100 text-[#7e0119]'
               }`}>
                 Box Pack
               </span>
@@ -138,7 +138,7 @@ export default function Header() {
                   }}
                   onFocus={() => setIsSearchOpen(true)}
                   placeholder="Search phones..."
-                  className="w-48 md:w-64 bg-slate-100/90 border border-slate-200 rounded-full py-2 pl-9 pr-3 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-[#002f34] focus:ring-2 focus:ring-[#002f34]/10 transition-all shadow-inner"
+                  className="w-48 md:w-64 bg-slate-100/90 border border-slate-200 rounded-full py-2 pl-9 pr-3 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-[#7e0119] focus:ring-2 focus:ring-[#7e0119]/10 transition-all shadow-inner"
                 />
                 <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                 {searchQuery && (
@@ -200,7 +200,7 @@ export default function Header() {
                             </div>
                           </div>
                         </div>
-                        <div className="text-xs font-bold text-emerald-700">
+                        <div className="text-xs font-bold text-[#7e0119]">
                           {formatPKR(item.price)}
                         </div>
                       </Link>
@@ -213,7 +213,7 @@ export default function Header() {
             {/* Shopping Bag Button */}
             <button
               onClick={() => setIsCartOpen(true)}
-              className="relative p-2.5 rounded-full bg-slate-900 hover:bg-[#002f34] text-white transition-all shadow-md cursor-pointer active:scale-95"
+              className="relative p-2.5 rounded-full bg-slate-900 hover:bg-[#7e0119] text-white transition-all shadow-md cursor-pointer active:scale-95"
               aria-label="Open Cart"
             >
               <ShoppingBag className="w-4 h-4 text-white" />

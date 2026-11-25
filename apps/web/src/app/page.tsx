@@ -93,17 +93,17 @@ function HomeContent() {
             onClick={() => handleSelectMode('new')}
             className={`group relative rounded-2xl sm:rounded-3xl p-5 sm:p-7 backdrop-blur-2xl border transition-all duration-300 cursor-pointer shadow-xs ${
               mode === 'new'
-                ? 'bg-gradient-to-br from-emerald-500/10 via-white/90 to-teal-500/10 border-emerald-400 ring-2 ring-emerald-400/40 shadow-lg'
-                : 'bg-white/80 hover:bg-white border-slate-200/90 hover:border-emerald-300 hover:shadow-md'
+                ? 'bg-gradient-to-br from-[#7e0119]/10 via-white/90 to-rose-500/10 border-[#7e0119] ring-2 ring-[#7e0119]/40 shadow-lg'
+                : 'bg-white/80 hover:bg-white border-slate-200/90 hover:border-[#7e0119]/40 hover:shadow-md'
             }`}
           >
             <div className="flex items-start justify-between gap-3">
               <div className="space-y-2">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-[10px] sm:text-xs font-black uppercase tracking-wider">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-100 text-[#7e0119] text-[10px] sm:text-xs font-black uppercase tracking-wider">
+                  <span className="w-2 h-2 rounded-full bg-[#7e0119] animate-pulse" />
                   Option 1: Factory Sealed
                 </span>
-                <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight group-hover:text-emerald-700 transition-colors">
+                <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight group-hover:text-[#7e0119] transition-colors">
                   Brand New Phones
                 </h3>
                 <p className="text-xs text-slate-600 max-w-sm leading-relaxed">
@@ -111,12 +111,12 @@ function HomeContent() {
                 </p>
               </div>
 
-              <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 shrink-0 shadow-xs group-hover:scale-110 group-hover:bg-emerald-600 group-hover:text-white transition-all">
+              <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-rose-50 border border-rose-200 flex items-center justify-center text-[#7e0119] shrink-0 shadow-xs group-hover:scale-110 group-hover:bg-[#7e0119] group-hover:text-white transition-all">
                 <Sparkles className="w-7 h-7" />
               </div>
             </div>
 
-            <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-emerald-700">
+            <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-[#7e0119]">
               <span>View Brand New Stock</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform" />
             </div>
@@ -187,7 +187,7 @@ function HomeContent() {
               <button
                 onClick={() => handleSelectMode('all')}
                 className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                  mode === 'all' ? 'bg-[#002f34] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
+                  mode === 'all' ? 'bg-[#7e0119] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 All
@@ -195,7 +195,7 @@ function HomeContent() {
               <button
                 onClick={() => handleSelectMode('new')}
                 className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                  mode === 'new' ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
+                  mode === 'new' ? 'bg-[#7e0119] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 New
@@ -216,7 +216,7 @@ function HomeContent() {
                 onClick={() => setViewMode('grid')}
                 className={`p-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1 ${
                   viewMode === 'grid'
-                    ? 'bg-[#002f34] text-white shadow-xs'
+                    ? 'bg-[#7e0119] text-white shadow-xs'
                     : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100'
                 }`}
                 aria-label="Card View"
@@ -229,7 +229,7 @@ function HomeContent() {
                 onClick={() => setViewMode('list')}
                 className={`p-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1 ${
                   viewMode === 'list'
-                    ? 'bg-[#002f34] text-white shadow-xs'
+                    ? 'bg-[#7e0119] text-white shadow-xs'
                     : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100'
                 }`}
                 aria-label="List View"
@@ -308,7 +308,7 @@ function HomeContent() {
         <div className="backdrop-blur-2xl bg-white/75 border border-white/80 rounded-2xl p-4 sm:p-6 shadow-xs">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div className="space-y-1">
-              <span className="text-[10px] font-black uppercase tracking-wider text-emerald-800 bg-emerald-100/80 px-2 py-0.5 rounded">
+              <span className="text-[10px] font-black uppercase tracking-wider text-[#7e0119] bg-rose-100/80 px-2 py-0.5 rounded">
                 CZN&apos;S Assurance
               </span>
               <h4 className="text-sm sm:text-base font-black text-slate-900">
@@ -321,11 +321,11 @@ function HomeContent() {
 
             <div className="flex flex-wrap items-center gap-2 shrink-0">
               <span className="inline-flex items-center gap-1 text-[11px] font-bold text-slate-800 bg-white px-2.5 py-1 rounded-lg border border-slate-200">
-                <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                <CheckCircle2 className="w-3 h-3 text-[#7e0119]" />
                 PTA Approved
               </span>
               <span className="inline-flex items-center gap-1 text-[11px] font-bold text-slate-800 bg-white px-2.5 py-1 rounded-lg border border-slate-200">
-                <Truck className="w-3 h-3 text-emerald-600" />
+                <Truck className="w-3 h-3 text-[#7e0119]" />
                 Karachi COD
               </span>
             </div>
