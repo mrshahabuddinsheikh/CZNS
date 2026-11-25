@@ -6,105 +6,34 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search,
-  MapPin,
-  MessageSquare,
   ShoppingBag,
-  Plus,
-  ChevronDown,
+  Sparkles,
+  BatteryCharging,
   PhoneCall,
-  User,
-  CheckCircle2,
-  ShieldCheck,
+  MapPin,
   X,
-  Compass,
 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { formatPKR } from '../lib/api';
-import SellPhoneModal from './SellPhoneModal';
-
-const CATEGORIES_RIBBON = [
-  { name: 'Mobile Phones', path: '/shop' },
-  { name: 'Brand New (Box Pack)', path: '/shop?condition=new' },
-  { name: 'Used Phones (10/10)', path: '/shop?condition=used' },
-  { name: 'Apple (iPhone)', path: '/shop?brand=apple' },
-  { name: 'Samsung Galaxy', path: '/shop?brand=samsung' },
-  { name: 'Google Pixel', path: '/shop?brand=google-pixel' },
-  { name: 'Xiaomi / Redmi', path: '/shop?brand=xiaomi' },
-  { name: 'OnePlus', path: '/shop?brand=oneplus' },
-  { name: 'PTA Approved', path: '/shop?pta=official' },
-];
-
-const LOCATIONS = [
-  'All Pakistan',
-  'Karachi (Star City Mall / Saddar)',
-  'Lahore (Hafeez Centre)',
-  'Islamabad / Rawalpindi',
-  'Peshawar',
-  'Faisalabad',
-  'Multan',
-  'Quetta',
-];
+import CznsLogo from './CznsLogo';
 
 export default function Header() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { totalItems, setIsCartOpen, setPhoneMode } = useCart();
+  const { totalItems, setIsCartOpen, phoneMode, setPhoneMode } = useCart();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [suggestions, setSuggestions] = useState<any[]>([]);
-  const [selectedLocation, setSelectedLocation] = useState('Karachi (Star City Mall / Saddar)');
-  const [isLocationOpen, setIsLocationOpen] = useState(false);
-  const [sellModalOpen, setSellModalOpen] = useState(false);
-
-  // Founder Verified Desk state
-  const [founderOpen, setFounderOpen] = useState(false);
-  const [founderInfo, setFounderInfo] = useState({
-    name: 'Sherry',
-    title: 'Founder & CEO, CZNS',
-    imageUrl: '/founder.jpg',
-    whatsapp: '923001234567',
-    badgeText: 'Founder Verified',
-  });
-
   const searchRef = useRef<HTMLDivElement>(null);
-  const locationRef = useRef<HTMLDivElement>(null);
-  const founderRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    async function loadSettings() {
-      try {
-        const res = await fetch('/api/v1/settings');
-        if (res.ok) {
-          const data = await res.json();
-          if (data.settings) {
-            setFounderInfo({
-              name: data.settings.founder_name || 'Sherry',
-              title: data.settings.founder_title || 'Founder & CEO, CZNS',
-              imageUrl: data.settings.founder_image_url || '/founder.jpg',
-              whatsapp: data.settings.founder_whatsapp || '923001234567',
-              badgeText: data.settings.founder_badge_text || 'Founder Verified',
-            });
-          }
-        }
-      } catch (err) {
-        // Fallback default
-      }
-    }
-    loadSettings();
-  }, []);
+  const currentMode = searchParams.get('mode') || searchParams.get('condition') || phoneMode;
 
-  // Click outside to close dropdowns
+  // Click outside to close search dropdown
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
         setIsSearchOpen(false);
-      }
-      if (locationRef.current && !locationRef.current.contains(event.target as Node)) {
-        setIsLocationOpen(false);
-      }
-      if (founderRef.current && !founderRef.current.contains(event.target as Node)) {
-        setFounderOpen(false);
       }
     }
     document.addEventListener('mousedown', handleClickOutside);
@@ -140,307 +69,185 @@ export default function Header() {
     }
   };
 
-  return (
-    <>
-      <header className="sticky top-0 z-40 w-full bg-white shadow-xs select-none">
-        {/* 1. TOP UTILITY ANNOUNCEMENT BAR (OLX STYLE) */}
-        <div className="bg-[#002f34] text-white text-[11px] font-medium py-1.5 px-3 sm:px-6">
-          <div className="max-w-[1440px] mx-auto flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <span className="font-extrabold tracking-wider text-[#ffce32] uppercase">
-                CZNS • OLX Mobile Hub
-              </span>
-              <span className="hidden sm:inline text-teal-300">•</span>
-              <span className="hidden sm:inline text-slate-200">Free Classifieds &amp; Certified Store in Pakistan</span>
-              <span className="hidden md:inline text-teal-300">•</span>
-              <span className="hidden md:inline text-teal-200 font-semibold">Star City Mall Saddar Desk</span>
-            </div>
+  const handleSelectMode = (mode: 'new' | 'used') => {
+    setPhoneMode(mode);
+    router.push(`/shop?condition=${mode}`);
+  };
 
-            <div className="flex items-center gap-3 text-slate-300">
-              <span className="text-[#ffce32] font-bold">Karachi Same-Day COD</span>
-              <span>•</span>
-              <Link href="/track-order" className="hover:text-white transition-colors">
-                Track Order
-              </Link>
-              <span>•</span>
-              <a
-                href="https://wa.me/923001234567"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-emerald-400 text-emerald-300 font-bold flex items-center gap-1"
-              >
-                <PhoneCall className="w-3 h-3" />
-                <span>Help</span>
-              </a>
-            </div>
+  return (
+    <header className="sticky top-0 z-40 w-full select-none">
+      {/* 1. TOP UTILITY ANNOUNCEMENT BAR */}
+      <div className="bg-[#002f34] text-white text-[11px] font-medium py-1.5 px-3 sm:px-6 border-b border-teal-900/40">
+        <div className="max-w-[1440px] mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <span className="font-extrabold tracking-wider text-[#ffce32] uppercase">
+              CZN&apos;S Certified Mobile Store
+            </span>
+            <span className="hidden sm:inline text-teal-400">•</span>
+            <span className="hidden sm:inline text-slate-200">Official PTA DIRBS Approved &amp; 100% Genuine</span>
+            <span className="hidden md:inline text-teal-400">•</span>
+            <span className="hidden md:inline text-teal-200">Star City Mall Saddar Desk, Karachi</span>
+          </div>
+
+          <div className="flex items-center gap-3 text-slate-300">
+            <span className="text-[#ffce32] font-bold">Same-Day COD</span>
+            <span>•</span>
+            <Link href="/track-order" className="hover:text-white transition-colors">
+              Track Order
+            </Link>
+            <span>•</span>
+            <a
+              href="https://wa.me/923001234567"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-emerald-300 text-emerald-400 font-bold flex items-center gap-1"
+            >
+              <PhoneCall className="w-3 h-3" />
+              <span>WhatsApp Help</span>
+            </a>
           </div>
         </div>
+      </div>
 
-        {/* 2. MAIN OLX NAVBAR */}
-        <div className="bg-[#f7f8f8] border-b border-slate-200 py-2.5 sm:py-3.5 px-3 sm:px-6">
-          <div className="max-w-[1440px] mx-auto flex items-center justify-between gap-3 sm:gap-5">
-            {/* Left: OLX-Style Heavy Geometric CZNS Logo */}
-            <Link href="/" className="flex items-center gap-1.5 shrink-0 group">
-              <div className="flex items-center">
-                <span className="text-3xl sm:text-4xl font-black tracking-tight text-[#002f34] uppercase font-sans">
-                  CZNS
-                </span>
-                <span className="w-2.5 h-2.5 rounded-full bg-[#00a49f] ml-0.5 mt-1" />
-              </div>
-            </Link>
+      {/* 2. MAIN HEADER WITH FROSTED GLASS EFFECT */}
+      <div className="backdrop-blur-2xl bg-white/85 border-b border-white/60 shadow-[0_4px_30px_rgba(0,47,52,0.04)] py-3 px-3 sm:px-6 transition-all">
+        <div className="max-w-[1440px] mx-auto flex items-center justify-between gap-3 sm:gap-6">
+          {/* Left: Custom CZN'S Logo */}
+          <CznsLogo size="md" />
 
-            {/* Middle: Location Dropdown + Wide Search Bar (The Signature OLX Search Bar Layout) */}
-            <div className="flex-1 flex items-center gap-2 max-w-4xl">
-              {/* Location Selector (Desktop/Tablet) */}
-              <div ref={locationRef} className="hidden md:block relative w-64 shrink-0">
-                <button
-                  type="button"
-                  onClick={() => setIsLocationOpen(!isLocationOpen)}
-                  className="w-full bg-white border-2 border-[#002f34] rounded-md py-2.5 px-3 flex items-center justify-between text-left text-xs font-bold text-[#002f34] cursor-pointer hover:border-teal-600 transition-colors shadow-xs"
-                >
-                  <div className="flex items-center gap-2 truncate">
-                    <MapPin className="w-4 h-4 text-[#002f34] shrink-0" />
-                    <span className="truncate">{selectedLocation}</span>
-                  </div>
-                  <ChevronDown className="w-4 h-4 text-slate-500 shrink-0 ml-1" />
-                </button>
+          {/* Center: THE 2 EXCLUSIVE OPTIONS (USED PHONE OR NEW PHONE JUST) */}
+          <div className="flex items-center gap-2 sm:gap-3">
+            {/* Option 1: New Phone Button */}
+            <button
+              onClick={() => handleSelectMode('new')}
+              className={`flex items-center gap-2 px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-extrabold transition-all duration-300 cursor-pointer ${
+                currentMode === 'new'
+                  ? 'bg-emerald-600 text-white shadow-[0_4px_16px_rgba(16,185,129,0.35)] scale-102 ring-2 ring-emerald-400/40'
+                  : 'bg-white/80 hover:bg-emerald-50 text-slate-800 border border-slate-200/90 hover:border-emerald-300 shadow-xs'
+              }`}
+            >
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <Sparkles className={`w-4 h-4 ${currentMode === 'new' ? 'text-white' : 'text-emerald-600'}`} />
+              <span>New Phone</span>
+              <span className={`hidden md:inline text-[10px] uppercase font-bold px-1.5 py-0.5 rounded-md ${
+                currentMode === 'new' ? 'bg-white/20 text-white' : 'bg-emerald-100 text-emerald-800'
+              }`}>
+                Box Pack
+              </span>
+            </button>
 
-                {/* Location Dropdown */}
-                <AnimatePresence>
-                  {isLocationOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 5 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 5 }}
-                      className="absolute left-0 top-12 w-full bg-white border border-slate-200 rounded-md shadow-xl py-1.5 z-50 text-xs font-semibold text-slate-700"
-                    >
-                      <div className="px-3 py-1 text-[10px] font-black uppercase text-slate-400 tracking-wider">
-                        Popular Locations
-                      </div>
-                      {LOCATIONS.map((loc) => (
-                        <button
-                          key={loc}
-                          onClick={() => {
-                            setSelectedLocation(loc);
-                            setIsLocationOpen(false);
-                          }}
-                          className={`w-full text-left px-3 py-2 hover:bg-slate-100 flex items-center gap-2 cursor-pointer ${
-                            selectedLocation === loc ? 'text-[#002f34] font-black bg-slate-50' : ''
-                          }`}
-                        >
-                          <MapPin className="w-3.5 h-3.5 text-slate-400" />
-                          <span>{loc}</span>
-                        </button>
-                      ))}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
+            {/* Option 2: Used Phone Button */}
+            <button
+              onClick={() => handleSelectMode('used')}
+              className={`flex items-center gap-2 px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-extrabold transition-all duration-300 cursor-pointer ${
+                currentMode === 'used'
+                  ? 'bg-amber-500 text-slate-950 shadow-[0_4px_16px_rgba(245,158,11,0.35)] scale-102 ring-2 ring-amber-300/60'
+                  : 'bg-white/80 hover:bg-amber-50 text-slate-800 border border-slate-200/90 hover:border-amber-300 shadow-xs'
+              }`}
+            >
+              <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+              <BatteryCharging className={`w-4 h-4 ${currentMode === 'used' ? 'text-slate-950' : 'text-amber-600'}`} />
+              <span>Used Phone</span>
+              <span className={`hidden md:inline text-[10px] uppercase font-bold px-1.5 py-0.5 rounded-md ${
+                currentMode === 'used' ? 'bg-black/15 text-slate-950' : 'bg-amber-100 text-amber-800'
+              }`}>
+                10/10 Mint
+              </span>
+            </button>
+          </div>
 
-              {/* Main Search Input with Right Button */}
-              <div ref={searchRef} className="relative flex-1">
-                <form onSubmit={handleSearchSubmit} className="relative flex items-center">
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => {
-                      setSearchQuery(e.target.value);
-                      setIsSearchOpen(true);
-                    }}
-                    onFocus={() => setIsSearchOpen(true)}
-                    placeholder="Find Mobile Phones, Used iPhones, Box Packed..."
-                    className="w-full bg-white border-2 border-[#002f34] rounded-md py-2.5 pl-3.5 pr-14 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-teal-700 transition-colors shadow-xs"
-                  />
-
-                  {/* Dark Teal OLX Search Button */}
+          {/* Right: Search Bar & Cart Bag */}
+          <div className="flex items-center gap-2.5 sm:gap-3.5 shrink-0">
+            {/* Live Search Input with Dropdown */}
+            <div ref={searchRef} className="relative">
+              <form onSubmit={handleSearchSubmit} className="relative flex items-center">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    setIsSearchOpen(true);
+                  }}
+                  onFocus={() => setIsSearchOpen(true)}
+                  placeholder="Search phones..."
+                  className="w-32 sm:w-56 md:w-64 bg-slate-100/90 border border-slate-200 rounded-full py-2 pl-8 sm:pl-9 pr-3 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-[#002f34] focus:ring-2 focus:ring-[#002f34]/10 transition-all shadow-inner"
+                />
+                <Search className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400 absolute left-2.5 sm:left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                {searchQuery && (
                   <button
-                    type="submit"
-                    className="absolute right-0 top-0 bottom-0 px-4 bg-[#002f34] hover:bg-[#003d44] text-white rounded-r-md flex items-center justify-center transition-colors cursor-pointer"
-                    aria-label="Search"
+                    type="button"
+                    onClick={() => {
+                      setSearchQuery('');
+                      setSuggestions([]);
+                    }}
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700"
                   >
-                    <Search className="w-5 h-5 text-white" />
+                    <X className="w-3 h-3" />
                   </button>
-                </form>
+                )}
+              </form>
 
-                {/* Autocomplete Dropdown */}
-                <AnimatePresence>
-                  {isSearchOpen && suggestions.length > 0 && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 5 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 5 }}
-                      className="absolute left-0 right-0 top-12 bg-white border border-slate-200 rounded-md shadow-2xl p-3 z-50 text-slate-800 space-y-1 max-h-80 overflow-y-auto no-scrollbar"
-                    >
-                      <div className="text-[10px] uppercase font-bold tracking-wider text-slate-400 px-1 mb-1">
-                        Matching Phones in Stock ({suggestions.length})
-                      </div>
-                      {suggestions.map((item) => (
-                        <Link
-                          key={item.id}
-                          href={`/phone/${item.slug}`}
-                          onClick={() => setIsSearchOpen(false)}
-                          className="flex items-center justify-between p-2 rounded-md hover:bg-slate-100 transition-colors"
-                        >
-                          <div className="flex items-center gap-2.5">
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img
-                              src={item.thumbnail}
-                              alt={item.name}
-                              className="w-8 h-8 object-contain rounded-md bg-slate-50 border border-slate-200"
-                            />
-                            <div>
-                              <div className="text-xs font-bold text-slate-900">
-                                {item.name}
-                              </div>
-                              <div className="text-[10px] text-slate-500">
-                                {item.is_used ? 'Certified 10/10' : 'Brand New'} • {item.pta_status}
-                              </div>
-                            </div>
-                          </div>
-                          <div className="text-xs font-bold text-[#002f34]">
-                            {formatPKR(item.price)}
-                          </div>
-                        </Link>
-                      ))}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            </div>
-
-            {/* Right Side: Chat, Founder Desk, Bag, and THE FAMOUS OLX "+ SELL" BUTTON */}
-            <div className="flex items-center gap-2 sm:gap-4 shrink-0">
-              {/* WhatsApp Chats */}
-              <a
-                href="https://wa.me/923001234567"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hidden lg:flex items-center gap-1.5 text-xs font-bold text-[#002f34] hover:text-teal-700 transition-colors p-2"
-                title="Direct WhatsApp Chat"
-              >
-                <MessageSquare className="w-5 h-5 text-[#002f34]" />
-                <span>Chats</span>
-              </a>
-
-              {/* Founder Verified Profile Desk */}
-              <div ref={founderRef} className="relative">
-                <button
-                  onClick={() => setFounderOpen(!founderOpen)}
-                  className="flex items-center gap-1.5 p-1 rounded-full hover:bg-slate-200/60 transition-colors cursor-pointer"
-                  title="Founder Desk"
-                >
-                  <div className="relative w-8 h-8 rounded-full overflow-hidden border-2 border-[#002f34]">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={founderInfo.imageUrl}
-                      alt={founderInfo.name}
-                      className="w-full h-full object-cover object-top"
-                    />
-                  </div>
-                  <ChevronDown className="hidden sm:inline w-3.5 h-3.5 text-[#002f34]" />
-                </button>
-
-                {/* Founder Popover */}
-                <AnimatePresence>
-                  {founderOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 5 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 5 }}
-                      className="absolute right-0 top-11 z-50 w-72 bg-white border-2 border-[#002f34] rounded-xl p-4 shadow-2xl space-y-3 text-slate-800"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-[#ffce32] shrink-0">
+              {/* Autocomplete Search Dropdown */}
+              <AnimatePresence>
+                {isSearchOpen && suggestions.length > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 5 }}
+                    className="absolute right-0 top-11 w-72 sm:w-80 bg-white/95 backdrop-blur-2xl border border-slate-200 rounded-2xl shadow-2xl p-3 z-50 text-slate-800 space-y-1 max-h-72 overflow-y-auto no-scrollbar"
+                  >
+                    <div className="text-[10px] uppercase font-bold tracking-wider text-slate-400 px-1 mb-1">
+                      Phones in Stock ({suggestions.length})
+                    </div>
+                    {suggestions.map((item) => (
+                      <Link
+                        key={item.id}
+                        href={`/phone/${item.slug}`}
+                        onClick={() => setIsSearchOpen(false)}
+                        className="flex items-center justify-between p-2 rounded-xl hover:bg-slate-100 transition-colors"
+                      >
+                        <div className="flex items-center gap-2">
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
-                            src={founderInfo.imageUrl}
-                            alt={founderInfo.name}
-                            className="w-full h-full object-cover object-top"
+                            src={item.thumbnail}
+                            alt={item.name}
+                            className="w-8 h-8 object-contain rounded-lg bg-slate-50 border border-slate-200"
                           />
-                        </div>
-                        <div>
-                          <div className="text-sm font-black text-[#002f34] flex items-center gap-1">
-                            <span>{founderInfo.name}</span>
-                            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                          <div>
+                            <div className="text-xs font-bold text-slate-900 truncate max-w-[150px]">
+                              {item.name}
+                            </div>
+                            <div className="text-[10px] text-slate-500">
+                              {item.is_used ? '10/10 Mint' : 'Brand New'}
+                            </div>
                           </div>
-                          <div className="text-xs font-bold text-slate-600">{founderInfo.title}</div>
-                          <div className="text-[10px] text-slate-400">Star City Mall Desk</div>
                         </div>
-                      </div>
-
-                      <div className="bg-slate-50 border border-slate-200 p-2 rounded-lg text-[11px] text-slate-600">
-                        Main personally har phone ka PTA approval, battery health aur physical condition verify karta hoon.
-                      </div>
-
-                      <a
-                        href={`https://wa.me/${founderInfo.whatsapp}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="w-full py-2 px-3 rounded-lg bg-[#002f34] text-white font-bold text-xs flex items-center justify-center gap-1.5"
-                      >
-                        <PhoneCall className="w-3.5 h-3.5 text-[#ffce32]" />
-                        <span>Chat with Sherry</span>
-                      </a>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-
-              {/* Shopping Bag Button */}
-              <button
-                onClick={() => setIsCartOpen(true)}
-                className="relative p-2 rounded-full hover:bg-slate-200/60 transition-colors text-[#002f34] cursor-pointer"
-                aria-label="Open Cart"
-              >
-                <ShoppingBag className="w-5 h-5 text-[#002f34]" />
-                {totalItems > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5 bg-[#ffce32] text-[#002f34] text-[10px] font-black w-4 h-4 rounded-full flex items-center justify-center border border-white">
-                    {totalItems}
-                  </span>
+                        <div className="text-xs font-bold text-emerald-700">
+                          {formatPKR(item.price)}
+                        </div>
+                      </Link>
+                    ))}
+                  </motion.div>
                 )}
-              </button>
-
-              {/* THE ICONIC OLX "+ SELL" BUTTON (DESKTOP) */}
-              <button
-                onClick={() => setSellModalOpen(true)}
-                className="hidden sm:inline-flex items-center gap-1.5 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-white border-[3.5px] border-t-[#23e5db] border-r-[#3a77ff] border-b-[#ffce32] border-l-[#23e5db] shadow-[0_3px_12px_rgba(0,47,52,0.15)] text-[#002f34] text-xs sm:text-sm font-black tracking-wide uppercase hover:scale-103 active:scale-95 transition-all cursor-pointer"
-                title="Sell Your Phone / Post Ad"
-              >
-                <Plus className="w-4 h-4 stroke-[3] text-[#002f34]" />
-                <span>SELL</span>
-              </button>
+              </AnimatePresence>
             </div>
-          </div>
-        </div>
 
-        {/* 3. SUB-HEADER CATEGORY RIBBON (AUTHENTIC OLX PK STYLE) */}
-        <div className="bg-white border-b border-slate-200 px-3 sm:px-6 py-2 overflow-x-auto no-scrollbar">
-          <div className="max-w-[1440px] mx-auto flex items-center gap-4 text-xs font-semibold text-slate-700 min-w-max">
-            {/* "ALL CATEGORIES" DROPDOWN TRIGGER */}
-            <Link
-              href="/shop"
-              className="flex items-center gap-1 font-black text-[#002f34] hover:text-teal-700 transition-colors uppercase tracking-wider pr-3 border-r border-slate-200"
+            {/* Shopping Bag Button */}
+            <button
+              onClick={() => setIsCartOpen(true)}
+              className="relative p-2.5 rounded-full bg-slate-900 hover:bg-[#002f34] text-white transition-all shadow-md cursor-pointer active:scale-95"
+              aria-label="Open Cart"
             >
-              <span>ALL CATEGORIES</span>
-              <ChevronDown className="w-3.5 h-3.5" />
-            </Link>
-
-            {/* Quick Category Links */}
-            {CATEGORIES_RIBBON.map((cat) => (
-              <Link
-                key={cat.name}
-                href={cat.path}
-                className="hover:text-[#002f34] hover:underline underline-offset-4 transition-colors"
-              >
-                {cat.name}
-              </Link>
-            ))}
+              <ShoppingBag className="w-4 h-4 text-white" />
+              {totalItems > 0 && (
+                <span className="absolute -top-1 -right-1 bg-amber-400 text-slate-950 text-[10px] font-black w-4 h-4 rounded-full flex items-center justify-center border-2 border-white shadow-xs">
+                  {totalItems}
+                </span>
+              )}
+            </button>
           </div>
         </div>
-      </header>
-
-      {/* Post Ad / Sell Phone Modal */}
-      <SellPhoneModal isOpen={sellModalOpen} onClose={() => setSellModalOpen(false)} />
-    </>
+      </div>
+    </header>
   );
 }

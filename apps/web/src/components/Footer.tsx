@@ -144,7 +144,7 @@ export default function Footer() {
           </h4>
           <ul className="space-y-1.5 text-xs text-slate-600">
             <li>
-              <span className="font-semibold text-slate-800">CZNS Mobile Hub</span>
+              <span className="font-semibold text-slate-800">CZN&apos;S Mobile Store</span>
             </li>
             <li>
               <span>Star City Mall Saddar, Karachi</span>
@@ -167,10 +167,10 @@ export default function Footer() {
           </ul>
         </div>
 
-        {/* Column 4: OLX / CZNS Help */}
+        {/* Column 4: CZN'S Help */}
         <div className="space-y-3">
           <h4 className="text-xs font-black uppercase tracking-wider text-[#002f34]">
-            CZNS / OLX HELP
+            CZN&apos;S HELP &amp; DESK
           </h4>
           <ul className="space-y-1.5 text-xs text-slate-600">
             <li>
@@ -227,7 +227,7 @@ export default function Footer() {
       <div className="bg-[#002f34] text-white py-4 px-4">
         <div className="max-w-[1440px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-xs">
           <div className="font-medium text-slate-300">
-            Free Classifieds in Pakistan • © 2026 CZNS Mobile Store. All rights reserved.
+            Certified Smartphone Marketplace • © {new Date().getFullYear()} CZN&apos;S Mobile Store. All rights reserved.
           </div>
           <div className="flex items-center gap-3 text-teal-200 text-[11px]">
             <span>Star City Mall Direct Desk</span>

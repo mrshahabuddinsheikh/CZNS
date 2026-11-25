@@ -5,121 +5,25 @@ import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import {
-  Smartphone,
   Sparkles,
   BatteryCharging,
   ShieldCheck,
-  Truck,
-  RotateCcw,
   CheckCircle2,
   Search,
-  Filter,
   ArrowRight,
-  Zap,
-  Tag,
-  Headphones,
-  Watch,
-  Tablet,
-  Plus,
+  LayoutGrid,
+  List,
   Compass,
+  Truck,
+  RotateCcw,
 } from 'lucide-react';
 import { Product } from '../lib/types';
 import { apiFetch, formatPKR } from '../lib/api';
 import ProductCard from '../components/ProductCard';
 import FilterBar from '../components/FilterBar';
 import DealOfTheDaySection from '../components/DealOfTheDay';
-import HeroSlider from '../components/HeroSlider';
 import ShoppableReels from '../components/ShoppableReels';
 import { useCart } from '../context/CartContext';
-import SellPhoneModal from '../components/SellPhoneModal';
-
-// OLX Pakistan Signature Circular Category Circles
-const OLX_CATEGORIES = [
-  {
-    name: 'Mobiles',
-    sub: '172 Models',
-    mode: 'all',
-    path: '/shop',
-    icon: (
-      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-teal-50 border-2 border-teal-200 flex items-center justify-center text-[#002f34] shadow-xs group-hover:scale-110 group-hover:bg-[#002f34] group-hover:text-white transition-all">
-        <Smartphone className="w-7 h-7 sm:w-8 sm:h-8" />
-      </div>
-    ),
-  },
-  {
-    name: 'Brand New',
-    sub: 'Box Pack',
-    mode: 'new',
-    path: '/shop?condition=new',
-    icon: (
-      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-emerald-50 border-2 border-emerald-200 flex items-center justify-center text-emerald-700 shadow-xs group-hover:scale-110 group-hover:bg-emerald-600 group-hover:text-white transition-all">
-        <Sparkles className="w-7 h-7 sm:w-8 sm:h-8" />
-      </div>
-    ),
-  },
-  {
-    name: 'Used Phones',
-    sub: '10/10 Mint',
-    mode: 'used',
-    path: '/shop?condition=used',
-    icon: (
-      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-amber-50 border-2 border-amber-200 flex items-center justify-center text-amber-700 shadow-xs group-hover:scale-110 group-hover:bg-amber-500 group-hover:text-slate-950 transition-all">
-        <BatteryCharging className="w-7 h-7 sm:w-8 sm:h-8" />
-      </div>
-    ),
-  },
-  {
-    name: 'Smart Watches',
-    sub: 'Wearables',
-    path: '/shop?search=watch',
-    icon: (
-      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-indigo-50 border-2 border-indigo-200 flex items-center justify-center text-indigo-700 shadow-xs group-hover:scale-110 group-hover:bg-indigo-600 group-hover:text-white transition-all">
-        <Watch className="w-7 h-7 sm:w-8 sm:h-8" />
-      </div>
-    ),
-  },
-  {
-    name: 'Accessories',
-    sub: 'Earbuds & Cables',
-    path: '/shop?search=buds',
-    icon: (
-      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-purple-50 border-2 border-purple-200 flex items-center justify-center text-purple-700 shadow-xs group-hover:scale-110 group-hover:bg-purple-600 group-hover:text-white transition-all">
-        <Headphones className="w-7 h-7 sm:w-8 sm:h-8" />
-      </div>
-    ),
-  },
-  {
-    name: 'Tablets & iPads',
-    sub: 'Large Screens',
-    path: '/shop?search=ipad',
-    icon: (
-      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-sky-50 border-2 border-sky-200 flex items-center justify-center text-sky-700 shadow-xs group-hover:scale-110 group-hover:bg-sky-600 group-hover:text-white transition-all">
-        <Tablet className="w-7 h-7 sm:w-8 sm:h-8" />
-      </div>
-    ),
-  },
-  {
-    name: 'PTA Approved',
-    sub: 'DIRBS Verified',
-    path: '/shop?pta=official',
-    icon: (
-      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-teal-50 border-2 border-teal-300 flex items-center justify-center text-teal-800 shadow-xs group-hover:scale-110 group-hover:bg-teal-700 group-hover:text-white transition-all">
-        <ShieldCheck className="w-7 h-7 sm:w-8 sm:h-8" />
-      </div>
-    ),
-  },
-  {
-    name: 'Sell Your Phone',
-    sub: 'Instant Cash',
-    isSell: true,
-    path: '#sell',
-    icon: (
-      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-amber-100 border-2 border-[#ffce32] flex items-center justify-center text-[#002f34] shadow-xs group-hover:scale-110 group-hover:bg-[#ffce32] transition-all">
-        <Plus className="w-7 h-7 sm:w-8 sm:h-8 stroke-[3]" />
-      </div>
-    ),
-  },
-];
 
 function HomeContent() {
   const router = useRouter();
@@ -129,7 +33,7 @@ function HomeContent() {
   const [products, setProducts] = useState<Product[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [sellModalOpen, setSellModalOpen] = useState(false);
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
   const mode = searchParams.get('mode') || phoneMode;
   const brand = searchParams.get('brand');
@@ -167,101 +71,177 @@ function HomeContent() {
     fetchProducts();
   }, [mode, brand, condition, pta, battery, storage, search, sort]);
 
-  return (
-    <div className="space-y-8 pb-16 text-slate-900 bg-[#f7f8f8] min-h-screen">
-      {/* 1. TOP PROMOTIONAL HERO CAROUSEL */}
-      <HeroSlider />
+  const handleSelectMode = (newMode: 'all' | 'new' | 'used') => {
+    setPhoneMode(newMode);
+    if (newMode === 'all') {
+      router.push('/');
+    } else {
+      router.push(`/?mode=${newMode}`);
+    }
+  };
 
-      {/* 2. OLX SIGNATURE CIRCULAR CATEGORIES SECTION */}
+  return (
+    <div className="space-y-6 sm:space-y-8 pb-16 text-slate-900 min-h-screen">
+      {/* 1. DIRECT DEAL OF THE DAY IN SIMPLE CLEAN GLASS UI (HERO REMOVED) */}
+      <DealOfTheDaySection />
+
+      {/* 2. THE 2 EXCLUSIVE CATEGORY OPTIONS (REPLACES PREVIOUS 8 CIRCLES AS SHOWN IN USER'S 2ND IMAGE) */}
       <section className="max-w-[1440px] mx-auto px-3 sm:px-6">
-        <div className="bg-white rounded-xl border border-slate-200 p-4 sm:p-6 shadow-xs">
-          <div className="text-xs font-black uppercase tracking-wider text-slate-400 mb-4 px-1">
-            Browse Popular Categories
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-5">
+          {/* OPTION 1: BRAND NEW SMARTPHONES */}
+          <div
+            onClick={() => handleSelectMode('new')}
+            className={`group relative rounded-2xl sm:rounded-3xl p-5 sm:p-7 backdrop-blur-2xl border transition-all duration-300 cursor-pointer shadow-xs ${
+              mode === 'new'
+                ? 'bg-gradient-to-br from-emerald-500/10 via-white/90 to-teal-500/10 border-emerald-400 ring-2 ring-emerald-400/40 shadow-lg'
+                : 'bg-white/80 hover:bg-white border-slate-200/90 hover:border-emerald-300 hover:shadow-md'
+            }`}
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div className="space-y-2">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-[10px] sm:text-xs font-black uppercase tracking-wider">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  Option 1: Factory Sealed
+                </span>
+                <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight group-hover:text-emerald-700 transition-colors">
+                  Brand New Phones
+                </h3>
+                <p className="text-xs text-slate-600 max-w-sm leading-relaxed">
+                  100% factory sealed pin-pack phones with 1-Year official brand warranty (Mercantile, Airlink) &amp; official PTA approval.
+                </p>
+              </div>
+
+              <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 shrink-0 shadow-xs group-hover:scale-110 group-hover:bg-emerald-600 group-hover:text-white transition-all">
+                <Sparkles className="w-7 h-7" />
+              </div>
+            </div>
+
+            <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-emerald-700">
+              <span>View Brand New Stock</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform" />
+            </div>
           </div>
 
-          <div className="grid grid-cols-4 sm:grid-cols-4 lg:grid-cols-8 gap-4 sm:gap-6 text-center">
-            {OLX_CATEGORIES.map((cat, idx) => (
-              <div
-                key={idx}
-                onClick={() => {
-                  if (cat.isSell) {
-                    setSellModalOpen(true);
-                  } else if (cat.mode) {
-                    setPhoneMode(cat.mode as any);
-                    router.push(cat.path);
-                  } else {
-                    router.push(cat.path);
-                  }
-                }}
-                className="group flex flex-col items-center cursor-pointer select-none"
-              >
-                {cat.icon}
-                <span className="font-bold text-xs text-slate-900 mt-2 group-hover:text-[#002f34] transition-colors leading-tight">
-                  {cat.name}
+          {/* OPTION 2: CERTIFIED USED SMARTPHONES */}
+          <div
+            onClick={() => handleSelectMode('used')}
+            className={`group relative rounded-2xl sm:rounded-3xl p-5 sm:p-7 backdrop-blur-2xl border transition-all duration-300 cursor-pointer shadow-xs ${
+              mode === 'used'
+                ? 'bg-gradient-to-br from-amber-500/10 via-white/90 to-yellow-500/10 border-amber-400 ring-2 ring-amber-400/40 shadow-lg'
+                : 'bg-white/80 hover:bg-white border-slate-200/90 hover:border-amber-300 hover:shadow-md'
+            }`}
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div className="space-y-2">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 text-amber-900 text-[10px] sm:text-xs font-black uppercase tracking-wider">
+                  <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+                  Option 2: 10/10 Mint Pre-Owned
                 </span>
-                <span className="text-[10px] text-slate-400 mt-0.5">{cat.sub}</span>
+                <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight group-hover:text-amber-800 transition-colors">
+                  Certified Used Phones
+                </h3>
+                <p className="text-xs text-slate-600 max-w-sm leading-relaxed">
+                  30-point diagnostic tested devices with guaranteed genuine battery health &amp; 7-day checking replacement warranty.
+                </p>
               </div>
-            ))}
+
+              <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-700 shrink-0 shadow-xs group-hover:scale-110 group-hover:bg-amber-500 group-hover:text-slate-950 transition-all">
+                <BatteryCharging className="w-7 h-7" />
+              </div>
+            </div>
+
+            <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-amber-800">
+              <span>View Certified Used Stock</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform" />
+            </div>
           </div>
         </div>
       </section>
 
-      {/* 3. 24-HOUR DEAL OF THE DAY */}
-      <DealOfTheDaySection />
-
-      {/* 4. SHOPPABLE REELS */}
-      <ShoppableReels />
-
-      {/* 5. MAIN SECTION: "Fresh recommendations" (SIGNATURE OLX PAKISTAN FEED) */}
-      <section className="max-w-[1440px] mx-auto px-3 sm:px-6 space-y-5">
-        {/* Section Heading & Quick Mode Switch */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 border-b border-slate-200">
+      {/* 3. DIRECT MOBILE PHONES CATALOG ("FRESH RECOMMENDATIONS" WITH LIST VIEW / CARD VIEW TOGGLE) */}
+      <section className="max-w-[1440px] mx-auto px-3 sm:px-6 space-y-4 sm:space-y-5">
+        {/* Section Header with List View / Card View Toggle */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 border-b border-slate-200/90">
           <div>
             <div className="flex items-center gap-2.5">
               <h2 className="text-xl sm:text-2xl font-black text-[#002f34] tracking-tight">
-                Fresh recommendations
+                {mode === 'new'
+                  ? 'Brand New Phones (Box Packed)'
+                  : mode === 'used'
+                  ? 'Certified Used Phones (10/10 Mint)'
+                  : 'Fresh recommendations'}
               </h2>
-              <span className="text-xs bg-slate-200 text-slate-800 px-2 py-0.5 rounded-full font-bold">
-                {totalCount} Ads
+              <span className="text-xs bg-slate-200/80 text-slate-800 px-2.5 py-0.5 rounded-full font-bold">
+                {totalCount} Models
               </span>
             </div>
             <p className="text-xs text-slate-500 mt-0.5">
-              Verified smartphones in Karachi, Star City Mall &amp; across Pakistan
+              Verified smartphones at Star City Mall Saddar, Karachi &amp; nationwide express delivery
             </p>
           </div>
 
-          {/* Quick Active Mode Switch Buttons */}
-          <div className="flex items-center gap-2">
-            <div className="flex items-center bg-white p-1 rounded-md border border-slate-300 shadow-xs">
+          {/* Controls: Mode filter + View Mode Switcher (List vs Card) */}
+          <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+            {/* Mode switch pills */}
+            <div className="flex items-center bg-white/90 p-1 rounded-xl border border-slate-200 shadow-xs">
               <button
-                onClick={() => setPhoneMode('all')}
-                className={`px-3 py-1.5 rounded-sm text-xs font-bold transition-all cursor-pointer ${
+                onClick={() => handleSelectMode('all')}
+                className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                   mode === 'all' ? 'bg-[#002f34] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                All Ads
+                All
               </button>
               <button
-                onClick={() => setPhoneMode('new')}
-                className={`px-3 py-1.5 rounded-sm text-xs font-bold transition-all cursor-pointer ${
+                onClick={() => handleSelectMode('new')}
+                className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                   mode === 'new' ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                Brand New
+                New
               </button>
               <button
-                onClick={() => setPhoneMode('used')}
-                className={`px-3 py-1.5 rounded-sm text-xs font-bold transition-all cursor-pointer ${
+                onClick={() => handleSelectMode('used')}
+                className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                   mode === 'used' ? 'bg-amber-500 text-slate-950 shadow-xs' : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                10/10 Used
+                Used
+              </button>
+            </div>
+
+            {/* LIST VIEW OR CARD VIEW TOGGLE (USER DEMAND) */}
+            <div className="flex items-center bg-white/90 p-1 rounded-xl border border-slate-200 shadow-xs" title="Toggle List / Card View">
+              <button
+                onClick={() => setViewMode('grid')}
+                className={`p-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1 ${
+                  viewMode === 'grid'
+                    ? 'bg-[#002f34] text-white shadow-xs'
+                    : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100'
+                }`}
+                aria-label="Card View"
+              >
+                <LayoutGrid className="w-4 h-4" />
+                <span className="hidden sm:inline text-[11px]">Card</span>
+              </button>
+
+              <button
+                onClick={() => setViewMode('list')}
+                className={`p-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1 ${
+                  viewMode === 'list'
+                    ? 'bg-[#002f34] text-white shadow-xs'
+                    : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100'
+                }`}
+                aria-label="List View"
+              >
+                <List className="w-4 h-4" />
+                <span className="hidden sm:inline text-[11px]">List</span>
               </button>
             </div>
 
             <Link
               href="/shop"
-              className="px-3.5 py-2 rounded-md bg-[#002f34] hover:bg-[#003d44] text-white text-xs font-bold flex items-center gap-1.5 transition-all shadow-xs"
+              className="px-3.5 py-1.5 rounded-xl bg-slate-900 hover:bg-[#002f34] text-white text-xs font-bold flex items-center gap-1 transition-all shadow-xs"
             >
               <Compass className="w-3.5 h-3.5" />
               <span>Full Shop</span>
@@ -272,97 +252,93 @@ function HomeContent() {
         {/* Detailed Smartphone Filter Bar */}
         <FilterBar targetPath="/" />
 
-        {/* OLX Product Cards Grid */}
+        {/* Products Grid or List Container */}
         {loading ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className={viewMode === 'grid' ? 'grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4' : 'flex flex-col gap-3'}>
             {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
               <div
                 key={n}
-                className="aspect-[3/4] bg-white rounded-lg animate-pulse border border-slate-200"
+                className={viewMode === 'grid' ? 'aspect-[3/4] bg-white/60 rounded-xl animate-pulse border border-slate-200' : 'h-32 bg-white/60 rounded-xl animate-pulse border border-slate-200'}
               />
             ))}
           </div>
         ) : products.length > 0 ? (
-          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+          <div className={viewMode === 'grid' ? 'grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4' : 'flex flex-col gap-3 sm:gap-4'}>
             {products.map((product) => (
-              <ProductCard key={product.id} product={product} />
+              <ProductCard key={product.id} product={product} viewMode={viewMode} />
             ))}
           </div>
         ) : (
-          <div className="bg-white border border-slate-200 rounded-xl p-12 text-center text-slate-500 space-y-4 shadow-xs">
-            <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mx-auto text-slate-400">
-              <Search className="w-8 h-8" />
+          <div className="bg-white/80 backdrop-blur-2xl border border-slate-200 rounded-2xl p-10 text-center text-slate-500 space-y-3 shadow-xs">
+            <div className="w-14 h-14 rounded-full bg-slate-100 flex items-center justify-center mx-auto text-slate-400">
+              <Search className="w-7 h-7" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-slate-800">No Mobile Ads Found</h3>
+              <h3 className="text-base font-bold text-slate-800">No Mobile Models Found</h3>
               <p className="text-xs text-slate-500 mt-1 max-w-md mx-auto">
-                No smartphones match your current filter combination. Try resetting your filters to explore all models.
+                No smartphones match your current filter combination. Try resetting your filters.
               </p>
             </div>
-            <Link
-              href="/shop"
-              className="inline-block px-5 py-2 rounded-md bg-[#002f34] text-white text-xs font-bold hover:bg-[#003d44] transition-all"
+            <button
+              onClick={() => handleSelectMode('all')}
+              className="inline-block px-4 py-2 rounded-xl bg-[#002f34] text-white text-xs font-bold hover:bg-[#003d44] transition-all"
             >
-              Reset Filters / Open Full Catalog
-            </Link>
+              Reset All Filters
+            </button>
           </div>
         )}
 
-        {/* Big OLX Load More / Explore Banner */}
-        <div className="pt-6 text-center">
+        {/* Big Explore Banner */}
+        <div className="pt-4 text-center">
           <Link
             href="/shop"
-            className="inline-flex items-center gap-2 px-8 py-3.5 rounded-md bg-white border-2 border-[#002f34] hover:bg-[#002f34] hover:text-white text-[#002f34] text-sm font-black transition-all group cursor-pointer shadow-xs"
+            className="inline-flex items-center gap-2 px-6 sm:px-8 py-3.5 rounded-xl bg-white/90 backdrop-blur-xl border-2 border-[#002f34] hover:bg-[#002f34] hover:text-white text-[#002f34] text-xs sm:text-sm font-black transition-all group shadow-xs cursor-pointer"
           >
-            <span>Explore All 170+ Pakistani Smartphones in Full Shop</span>
+            <span>Explore All 170+ Phones in Full Shop Catalog</span>
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>
       </section>
 
-      {/* 6. OLX APP PROMOTION BANNER (AUTHENTIC OLX PK STYLE) */}
-      <section className="max-w-[1440px] mx-auto px-3 sm:px-6 pt-4">
-        <div className="bg-[#ebeeef] border border-slate-300 rounded-xl p-6 sm:p-10 flex flex-col md:flex-row items-center justify-between gap-6 overflow-hidden relative">
-          <div className="space-y-3 max-w-xl text-left">
-            <span className="text-[11px] font-black uppercase tracking-wider text-teal-800 bg-teal-100 px-2.5 py-1 rounded-sm">
-              Free Classifieds in Pakistan
-            </span>
-            <h3 className="text-2xl sm:text-3xl font-black text-[#002f34] tracking-tight">
-              TRY THE CZNS MOBILE APP
-            </h3>
-            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-              Buy, sell and find verified smartphones, box packed flagships, and certified 10/10 pre-owned phones anywhere in Pakistan.
-            </p>
-            <div className="flex items-center gap-3 pt-2">
-              <div className="px-3.5 py-2 rounded-md bg-[#002f34] text-white text-xs font-bold flex items-center gap-2 shadow-xs cursor-pointer">
-                <span>Google Play Store</span>
-              </div>
-              <div className="px-3.5 py-2 rounded-md bg-[#002f34] text-white text-xs font-bold flex items-center gap-2 shadow-xs cursor-pointer">
-                <span>Apple App Store</span>
-              </div>
-            </div>
-          </div>
+      {/* 4. SHOPPABLE REELS CAROUSEL (PLACED AFTER PRODUCTS AS REQUESTED: "reel last me aae") */}
+      <ShoppableReels />
 
-          <div className="flex items-center gap-6 shrink-0">
-            <div className="hidden sm:block p-3 bg-white rounded-lg border border-slate-300 text-center shadow-xs">
-              <div className="w-24 h-24 bg-slate-100 rounded-md flex items-center justify-center font-mono text-[10px] text-slate-400">
-                [QR CODE]
-              </div>
-              <span className="text-[10px] font-bold text-slate-600 block mt-1">Scan to Download</span>
+      {/* 5. TRUST SIGNALS & PROTOCOL (COMPACT & SAFE ON MOBILE SO NO OVERLAP WITH CHATBOT) */}
+      <section className="max-w-[1440px] mx-auto px-3 sm:px-6 pt-2 pb-24 sm:pb-8">
+        <div className="backdrop-blur-2xl bg-white/75 border border-white/80 rounded-2xl p-4 sm:p-6 shadow-xs">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div className="space-y-1">
+              <span className="text-[10px] font-black uppercase tracking-wider text-emerald-800 bg-emerald-100/80 px-2 py-0.5 rounded">
+                CZN&apos;S Assurance
+              </span>
+              <h4 className="text-sm sm:text-base font-black text-slate-900">
+                30-Point Diagnostic Check Before Any Phone Leaves Star City Mall Desk
+              </h4>
+              <p className="text-[11px] text-slate-600 max-w-xl">
+                Every phone has verified PTA DIRBS status, genuine battery health, and unconditioned 7-day replacement warranty.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2 shrink-0">
+              <span className="inline-flex items-center gap-1 text-[11px] font-bold text-slate-800 bg-white px-2.5 py-1 rounded-lg border border-slate-200">
+                <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                PTA Approved
+              </span>
+              <span className="inline-flex items-center gap-1 text-[11px] font-bold text-slate-800 bg-white px-2.5 py-1 rounded-lg border border-slate-200">
+                <Truck className="w-3 h-3 text-emerald-600" />
+                Karachi COD
+              </span>
             </div>
           </div>
         </div>
       </section>
-
-      {/* Post Ad / Sell Phone Modal */}
-      <SellPhoneModal isOpen={sellModalOpen} onClose={() => setSellModalOpen(false)} />
     </div>
   );
 }
 
 export default function HomePage() {
   return (
-    <Suspense fallback={<div className="min-h-screen p-8 text-center text-xs text-slate-400">Loading CZNS Mobile Hub...</div>}>
+    <Suspense fallback={<div className="min-h-screen p-8 text-center text-xs text-slate-400">Loading CZN&apos;S Mobile Store...</div>}>
       <HomeContent />
     </Suspense>
   );
