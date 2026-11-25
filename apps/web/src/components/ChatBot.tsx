@@ -317,7 +317,7 @@ export default function ChatBot() {
   return (
     <>
       {/* FLOATING TRIGGER BUTTON */}
-      <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-40 flex items-center gap-2">
+      <div className="fixed bottom-20 right-4 sm:bottom-6 sm:right-6 z-40 flex items-center gap-2">
         {/* Floating Callout Pill (Auto-highlights the 2-click buy capability, hidden on mobile) */}
         {!isOpen && hasUnread && (
           <motion.div

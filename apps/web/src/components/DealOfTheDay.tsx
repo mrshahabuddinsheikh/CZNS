@@ -171,8 +171,8 @@ export default function DealOfTheDaySection() {
           isExpired ? 'grayscale contrast-125 opacity-75 select-none' : ''
         }`}
       >
-        {/* Main Inset Card with Light Luxury Curved Styling */}
-        <div className="relative rounded-[28px] sm:rounded-[36px] bg-white border-2 border-amber-300 shadow-[0_20px_50px_rgba(245,158,11,0.12)] overflow-hidden text-slate-900">
+        {/* Main Inset Card with OLX Styling */}
+        <div className="relative rounded-xl sm:rounded-2xl bg-white border border-slate-300 shadow-xs overflow-hidden text-slate-900">
           {/* Top Banner Ribbon */}
           <div className="bg-gradient-to-r from-amber-500 via-orange-500 to-rose-600 px-6 py-2.5 text-white flex flex-wrap items-center justify-between gap-3 font-extrabold text-xs shadow-md">
             <div className="flex items-center gap-2">

@@ -160,7 +160,8 @@ function ShopContent() {
   }, [condition, brand, pta, battery, storage, search, sort, maxPrice]);
 
   return (
-    <div className="max-w-[1440px] mx-auto px-3 sm:px-6 py-6 sm:py-8 space-y-6 sm:space-y-8 text-slate-900">
+    <div className="bg-[#f7f8f8] min-h-screen py-6 sm:py-8 text-slate-900">
+      <div className="max-w-[1440px] mx-auto px-3 sm:px-6 space-y-6 sm:space-y-8">
       {/* 1. SHOP HEADER & BREADCRUMBS */}
       <div className="space-y-4">
         {/* Breadcrumb */}
@@ -705,6 +706,7 @@ function ShopContent() {
           </div>
         )}
       </AnimatePresence>
+      </div>
     </div>
   );
 }

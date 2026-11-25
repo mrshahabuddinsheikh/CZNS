@@ -207,8 +207,8 @@ export default function HeroSlider() {
       onMouseLeave={() => setIsPaused(false)}
       className="max-w-[1440px] mx-auto px-2 sm:px-4 pt-3 sm:pt-4"
     >
-      {/* INSET CONTAINER WITH LIGHT LUXURY CURVED CORNERS */}
-      <div className="relative rounded-[26px] sm:rounded-[36px] bg-gradient-to-br from-white via-slate-50 to-emerald-50/30 border border-slate-200/90 overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.05)] min-h-[500px] sm:min-h-[560px] flex items-center">
+      {/* INSET CONTAINER WITH OLX CURVED CORNERS */}
+      <div className="relative rounded-xl sm:rounded-2xl bg-white border border-slate-300 overflow-hidden shadow-xs min-h-[460px] sm:min-h-[520px] flex items-center">
         {/* Dynamic Studio Lighting behind active phone */}
         <div
           className="absolute inset-0 pointer-events-none transition-all duration-700"
@@ -277,7 +277,7 @@ export default function HeroSlider() {
                     <div className="flex items-center gap-3">
                       <Link
                         href={slide.link}
-                        className="px-6 py-3.5 rounded-full bg-slate-900 text-white hover:bg-emerald-600 font-black text-xs sm:text-sm shadow-md transition-all flex items-center gap-2 group active:scale-95 cursor-pointer"
+                        className="px-6 py-3.5 rounded-md bg-[#002f34] text-white hover:bg-[#003d44] font-black text-xs sm:text-sm shadow-xs transition-all flex items-center gap-2 group active:scale-95 cursor-pointer"
                       >
                         <span>Explore Collection</span>
                         <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -287,7 +287,7 @@ export default function HeroSlider() {
                         href={`https://wa.me/923001234567?text=Salam%20CZNS!%20I%20am%20interested%20in%20${encodeURIComponent(slide.title)}.`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="px-4 py-3.5 rounded-full bg-white hover:bg-slate-50 text-slate-800 font-bold text-xs sm:text-sm border border-slate-200 shadow-xs transition-all flex items-center gap-2 active:scale-95 cursor-pointer"
+                        className="px-4 py-3.5 rounded-md bg-white hover:bg-slate-50 text-[#002f34] font-bold text-xs sm:text-sm border border-slate-300 shadow-xs transition-all flex items-center gap-2 active:scale-95 cursor-pointer"
                       >
                         <PhoneCall className="w-4 h-4 text-emerald-600" />
                         <span>WhatsApp</span>
@@ -378,7 +378,7 @@ export default function HeroSlider() {
               key={i}
               onClick={() => setCurrentIdx(i)}
               className={`transition-all rounded-full ${
-                i === currentIdx ? 'w-6 h-2 bg-emerald-600' : 'w-2 h-2 bg-slate-300 hover:bg-slate-500'
+                i === currentIdx ? 'w-6 h-2 bg-[#002f34]' : 'w-2 h-2 bg-slate-300 hover:bg-slate-500'
               }`}
               aria-label={`Go to slide ${i + 1}`}
             />

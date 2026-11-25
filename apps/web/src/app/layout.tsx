@@ -10,6 +10,7 @@ import CartDrawer from '../components/CartDrawer';
 import SocialProofToast from '../components/SocialProofToast';
 import ExitIntentLeadPopup from '../components/ExitIntentLeadPopup';
 import ChatBot from '../components/ChatBot';
+import MobileBottomBar from '../components/MobileBottomBar';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
@@ -71,6 +72,7 @@ export default function RootLayout({
               <SocialProofToast />
               <ExitIntentLeadPopup />
               <ChatBot />
+              <MobileBottomBar />
             </div>
           </CartProvider>
         </ThemeProvider>

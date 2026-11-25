@@ -11,211 +11,228 @@ import {
   Mail,
   MapPin,
   Lock,
-  BatteryCharging,
-  Sparkles,
   ArrowRight,
-  ExternalLink,
 } from 'lucide-react';
 
 export default function Footer() {
   return (
-    <footer className="bg-slate-100/95 border-t border-slate-200/90 text-slate-600 mt-20 relative overflow-hidden">
+    <footer className="bg-[#ebeeef] border-t border-slate-300 text-slate-700 mt-12 relative select-none">
       {/* 4 Feature Trust Blocks */}
-      <div className="border-b border-slate-200/80 py-8 px-4 bg-white/70 backdrop-blur-md">
-        <div className="max-w-[1440px] mx-auto grid grid-cols-2 md:grid-cols-4 gap-6">
-          <div className="flex items-center gap-3.5">
-            <div className="w-11 h-11 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 shrink-0 shadow-xs">
-              <ShieldCheck className="w-6 h-6" />
+      <div className="border-b border-slate-300 py-6 px-4 bg-white">
+        <div className="max-w-[1440px] mx-auto grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-md bg-teal-50 border border-teal-200 flex items-center justify-center text-[#002f34] shrink-0">
+              <ShieldCheck className="w-5 h-5 text-[#002f34]" />
             </div>
             <div>
-              <div className="text-xs font-bold text-slate-900">100% Genuine IMEI</div>
+              <div className="text-xs font-black text-[#002f34]">100% Genuine IMEI</div>
               <div className="text-[11px] text-slate-500">PTA DIRBS verified &amp; checked</div>
             </div>
           </div>
 
-          <div className="flex items-center gap-3.5">
-            <div className="w-11 h-11 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600 shrink-0 shadow-xs">
-              <RotateCcw className="w-6 h-6" />
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-md bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-700 shrink-0">
+              <RotateCcw className="w-5 h-5" />
             </div>
             <div>
-              <div className="text-xs font-bold text-slate-900">7 Days Checking Warranty</div>
+              <div className="text-xs font-black text-[#002f34]">7 Days Checking Warranty</div>
               <div className="text-[11px] text-slate-500">Money-back or replacement</div>
             </div>
           </div>
 
-          <div className="flex items-center gap-3.5">
-            <div className="w-11 h-11 rounded-2xl bg-cyan-50 border border-cyan-200 flex items-center justify-center text-cyan-600 shrink-0 shadow-xs">
-              <Truck className="w-6 h-6" />
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-md bg-cyan-50 border border-cyan-200 flex items-center justify-center text-cyan-700 shrink-0">
+              <Truck className="w-5 h-5" />
             </div>
             <div>
-              <div className="text-xs font-bold text-slate-900">Karachi COD Available</div>
-              <div className="text-[11px] text-slate-500">Rs. 250 fee | Free on advance</div>
+              <div className="text-xs font-black text-[#002f34]">Karachi Same-Day COD</div>
+              <div className="text-[11px] text-slate-500">Free courier nationwide</div>
             </div>
           </div>
 
-          <div className="flex items-center gap-3.5">
-            <div className="w-11 h-11 rounded-2xl bg-purple-50 border border-purple-200 flex items-center justify-center text-purple-600 shrink-0 shadow-xs">
-              <Lock className="w-6 h-6" />
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-md bg-purple-50 border border-purple-200 flex items-center justify-center text-purple-700 shrink-0">
+              <Lock className="w-5 h-5" />
             </div>
             <div>
-              <div className="text-xs font-bold text-slate-900">Verified Pakistani Gateways</div>
-              <div className="text-[11px] text-slate-500">JazzCash, Easypaisa, Raast, IBFT</div>
+              <div className="text-xs font-black text-[#002f34]">Verified Cash Outlets</div>
+              <div className="text-[11px] text-slate-500">Star City Mall Saddar Desk</div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Main Footer Links */}
-      <div className="max-w-[1440px] mx-auto px-4 py-12 grid grid-cols-1 md:grid-cols-4 gap-8">
-        {/* Brand & Mission */}
-        <div className="space-y-4">
-          <div className="flex items-center gap-2.5">
-            <span className="text-2xl font-black tracking-[0.2em] text-slate-900">CZNS</span>
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-          </div>
-          <p className="text-xs text-slate-600 leading-relaxed">
-            Pakistan&apos;s premier smartphone destination for Brand New (Factory Pin-Packed with Official Brand Warranty) and Certified Pre-Owned (Graded 10/10 with Battery Health guarantee) iPhones and Android flagships.
-          </p>
-          <div className="text-xs text-slate-600 space-y-2 pt-2">
-            <div className="flex items-center gap-2">
-              <MapPin className="w-4 h-4 text-emerald-600 shrink-0" />
-              <span>Saddar Star City Mall Direct Desk, Karachi</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <PhoneCall className="w-4 h-4 text-emerald-600 shrink-0" />
-              <a href="https://wa.me/923001234567" target="_blank" rel="noopener noreferrer" className="font-semibold hover:text-emerald-700 transition-colors">
-                +92 300 1234567 (WhatsApp Helpline)
-              </a>
-            </div>
-            <div className="flex items-center gap-2">
-              <Mail className="w-4 h-4 text-emerald-600 shrink-0" />
-              <span>orders@czns.pk</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Categories */}
+      {/* Main 5-Column OLX Classifieds Links */}
+      <div className="max-w-[1440px] mx-auto px-4 py-10 grid grid-cols-2 md:grid-cols-5 gap-6 sm:gap-8">
+        {/* Column 1: Popular Categories */}
         <div className="space-y-3">
-          <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900">
-            Explore Phones
+          <h4 className="text-xs font-black uppercase tracking-wider text-[#002f34]">
+            POPULAR CATEGORIES
           </h4>
-          <ul className="space-y-2 text-xs text-slate-600">
+          <ul className="space-y-1.5 text-xs text-slate-600">
             <li>
-              <Link href="/shop" className="hover:text-emerald-600 flex items-center gap-1.5 font-semibold text-slate-800 transition-colors">
-                <span>Shop All Smartphones</span>
-                <ArrowRight className="w-3 h-3 text-emerald-600" />
+              <Link href="/shop?brand=apple" className="hover:text-[#002f34] hover:underline">
+                Apple iPhones
               </Link>
             </li>
             <li>
-              <Link href="/shop?condition=new" className="hover:text-emerald-600 flex items-center gap-1.5 transition-colors">
-                <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
-                <span>New Pin-Packed Phones</span>
+              <Link href="/shop?brand=samsung" className="hover:text-[#002f34] hover:underline">
+                Samsung Galaxy
               </Link>
             </li>
             <li>
-              <Link href="/shop?condition=used" className="hover:text-emerald-600 flex items-center gap-1.5 transition-colors">
-                <BatteryCharging className="w-3.5 h-3.5 text-amber-500" />
-                <span>Certified Used Phones (10/10)</span>
+              <Link href="/shop?brand=google-pixel" className="hover:text-[#002f34] hover:underline">
+                Google Pixel Phones
               </Link>
             </li>
             <li>
-              <Link href="/shop?brand=apple" className="hover:text-emerald-600 transition-colors">
-                Apple iPhones (13, 14, 15, 16, 17 Pro)
+              <Link href="/shop?brand=xiaomi" className="hover:text-[#002f34] hover:underline">
+                Xiaomi / Redmi
               </Link>
             </li>
             <li>
-              <Link href="/shop?brand=samsung" className="hover:text-emerald-600 transition-colors">
-                Samsung Galaxy S &amp; Z Series
+              <Link href="/shop?brand=oneplus" className="hover:text-[#002f34] hover:underline">
+                OnePlus
               </Link>
             </li>
             <li>
-              <Link href="/shop?brand=google-pixel" className="hover:text-emerald-600 transition-colors">
-                Google Pixel Phones (Tensor)
+              <Link href="/shop?condition=used" className="hover:text-[#002f34] hover:underline">
+                10/10 Mint Pre-Owned
               </Link>
             </li>
           </ul>
         </div>
 
-        {/* Quick Brands */}
+        {/* Column 2: Trending Searches */}
         <div className="space-y-3">
-          <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900">
-            Top Brands
+          <h4 className="text-xs font-black uppercase tracking-wider text-[#002f34]">
+            TRENDING SEARCHES
           </h4>
-          <div className="grid grid-cols-2 gap-2 text-xs text-slate-600">
-            <Link href="/shop?brand=xiaomi" className="hover:text-emerald-600 transition-colors">
-              Xiaomi / Redmi
-            </Link>
-            <Link href="/shop?brand=oneplus" className="hover:text-emerald-600 transition-colors">
-              OnePlus
-            </Link>
-            <Link href="/shop?brand=vivo" className="hover:text-emerald-600 transition-colors">
-              Vivo
-            </Link>
-            <Link href="/shop?brand=oppo" className="hover:text-emerald-600 transition-colors">
-              Oppo
-            </Link>
-            <Link href="/shop?brand=motorola" className="hover:text-emerald-600 transition-colors">
-              Motorola
-            </Link>
-            <Link href="/shop?brand=infinix" className="hover:text-emerald-600 transition-colors">
-              Infinix
-            </Link>
-            <Link href="/shop?brand=tecno" className="hover:text-emerald-600 transition-colors">
-              Tecno
-            </Link>
-            <Link href="/shop?brand=nokia" className="hover:text-emerald-600 transition-colors">
-              Nokia
-            </Link>
-            <Link href="/shop?brand=nothing" className="hover:text-emerald-600 transition-colors">
-              Nothing Phone
-            </Link>
-            <Link href="/shop?brand=realme" className="hover:text-emerald-600 transition-colors">
-              Realme
-            </Link>
-          </div>
-        </div>
-
-        {/* Customer Care & Admin */}
-        <div className="space-y-3">
-          <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900">
-            Customer Care
-          </h4>
-          <ul className="space-y-2 text-xs text-slate-600">
+          <ul className="space-y-1.5 text-xs text-slate-600">
             <li>
-              <Link href="/track-order" className="hover:text-emerald-600 transition-colors">
-                Track Order Status
+              <Link href="/shop?search=15+pro" className="hover:text-[#002f34] hover:underline">
+                iPhone 15 Pro Max
               </Link>
             </li>
+            <li>
+              <Link href="/shop?search=s24" className="hover:text-[#002f34] hover:underline">
+                Samsung S24 Ultra 5G
+              </Link>
+            </li>
+            <li>
+              <Link href="/shop?search=pixel+8" className="hover:text-[#002f34] hover:underline">
+                Pixel 8 Pro Tensor G3
+              </Link>
+            </li>
+            <li>
+              <Link href="/shop?condition=new" className="hover:text-[#002f34] hover:underline">
+                Box Packed Smartphones
+              </Link>
+            </li>
+            <li>
+              <Link href="/shop?pta=official" className="hover:text-[#002f34] hover:underline">
+                Official PTA Approved
+              </Link>
+            </li>
+          </ul>
+        </div>
+
+        {/* Column 3: About Us */}
+        <div className="space-y-3">
+          <h4 className="text-xs font-black uppercase tracking-wider text-[#002f34]">
+            ABOUT US
+          </h4>
+          <ul className="space-y-1.5 text-xs text-slate-600">
+            <li>
+              <span className="font-semibold text-slate-800">CZNS Mobile Hub</span>
+            </li>
+            <li>
+              <span>Star City Mall Saddar, Karachi</span>
+            </li>
+            <li>
+              <Link href="/shop" className="hover:text-[#002f34] hover:underline">
+                Explore Full Inventory
+              </Link>
+            </li>
+            <li>
+              <Link href="/track-order" className="hover:text-[#002f34] hover:underline">
+                Track Live Order
+              </Link>
+            </li>
+            <li>
+              <Link href="/admin/login" className="hover:text-[#002f34] hover:underline">
+                Admin / Staff Portal
+              </Link>
+            </li>
+          </ul>
+        </div>
+
+        {/* Column 4: OLX / CZNS Help */}
+        <div className="space-y-3">
+          <h4 className="text-xs font-black uppercase tracking-wider text-[#002f34]">
+            CZNS / OLX HELP
+          </h4>
+          <ul className="space-y-1.5 text-xs text-slate-600">
             <li>
               <a
                 href="https://wa.me/923001234567"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-emerald-700 transition-colors flex items-center gap-1 text-emerald-700 font-bold"
+                className="hover:text-[#002f34] hover:underline flex items-center gap-1 font-bold text-emerald-700"
               >
-                <PhoneCall className="w-3.5 h-3.5" />
-                <span>Karachi WhatsApp Desk</span>
+                <PhoneCall className="w-3 h-3" />
+                <span>WhatsApp Helpline</span>
               </a>
             </li>
             <li>
-              <Link href="/admin/login" className="hover:text-slate-900 transition-colors text-slate-400">
-                Staff / Admin Portal
-              </Link>
+              <span>7 Days Checking Warranty</span>
+            </li>
+            <li>
+              <span>PTA DIRBS Compliance</span>
+            </li>
+            <li>
+              <span>Terms of Use &amp; Privacy</span>
             </li>
           </ul>
         </div>
+
+        {/* Column 5: Follow Us & Download App */}
+        <div className="space-y-3 col-span-2 md:col-span-1">
+          <h4 className="text-xs font-black uppercase tracking-wider text-[#002f34]">
+            FOLLOW US
+          </h4>
+          <p className="text-[11px] text-slate-600">
+            Pakistan&apos;s verified smartphone destination. Buy and sell with 100% peace of mind.
+          </p>
+          <div className="pt-2 space-y-2">
+            <div className="text-[10px] font-bold text-slate-500 uppercase">
+              Free Classifieds in Pakistan
+            </div>
+            <div className="flex flex-wrap gap-1.5">
+              <span className="px-2 py-1 bg-white border border-slate-300 rounded text-[10px] font-bold text-slate-700">
+                Karachi
+              </span>
+              <span className="px-2 py-1 bg-white border border-slate-300 rounded text-[10px] font-bold text-slate-700">
+                Lahore
+              </span>
+              <span className="px-2 py-1 bg-white border border-slate-300 rounded text-[10px] font-bold text-slate-700">
+                Islamabad
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* Bottom Bar */}
-      <div className="border-t border-slate-200 py-6 px-4 bg-slate-200/50">
-        <div className="max-w-[1440px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
-          <div>
-            © {new Date().getFullYear()} CZNS Pakistan Mobile Store. All rights reserved.
+      {/* OLX Bottom Dark Teal Copyright Bar */}
+      <div className="bg-[#002f34] text-white py-4 px-4">
+        <div className="max-w-[1440px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-xs">
+          <div className="font-medium text-slate-300">
+            Free Classifieds in Pakistan • © 2026 CZNS Mobile Store. All rights reserved.
           </div>
-          <div className="flex items-center gap-4">
-            <span>Karachi Star City Mall Saddar Desk</span>
+          <div className="flex items-center gap-3 text-teal-200 text-[11px]">
+            <span>Star City Mall Direct Desk</span>
             <span>•</span>
-            <span>Official PTA DIRBS Compliant</span>
+            <span>PTA DIRBS Verified</span>
           </div>
         </div>
       </div>

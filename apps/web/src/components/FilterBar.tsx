@@ -63,21 +63,21 @@ export default function FilterBar({ targetPath = '/shop' }: { targetPath?: strin
     searchParams.has('max_price');
 
   return (
-    <div className="glass-translucent rounded-3xl p-5 space-y-4 text-slate-900">
+    <div className="bg-white rounded-xl border border-slate-200 p-4 sm:p-5 space-y-4 text-slate-900 shadow-xs">
       {/* Top Header & Reset */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="p-1.5 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-200">
+          <div className="p-1.5 rounded-md bg-teal-50 text-[#002f34] border border-teal-200">
             <Filter className="w-4 h-4" />
           </div>
-          <span className="text-sm font-black text-slate-900 tracking-wide">
-            Smartphone Filters &amp; Wholesale Price Range
+          <span className="text-sm font-black text-[#002f34] tracking-wide">
+            Filter Mobile Ads &amp; Budget Range
           </span>
         </div>
         {hasActiveFilters && (
           <button
             onClick={clearAllFilters}
-            className="flex items-center gap-1 text-xs font-bold text-rose-600 hover:text-rose-700 bg-rose-50 px-3 py-1 rounded-xl border border-rose-200 transition-colors cursor-pointer"
+            className="flex items-center gap-1 text-xs font-bold text-rose-600 hover:text-rose-700 bg-rose-50 px-3 py-1 rounded-md border border-rose-200 transition-colors cursor-pointer"
           >
             <X className="w-3.5 h-3.5" />
             <span>Reset All</span>
@@ -96,7 +96,7 @@ export default function FilterBar({ targetPath = '/shop' }: { targetPath?: strin
             <select
               value={currentMode}
               onChange={(e) => updateParam('mode', e.target.value)}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 font-semibold focus:bg-white focus:border-emerald-500 outline-none cursor-pointer appearance-none"
+              className="w-full bg-slate-50 border border-slate-300 rounded-md px-3 py-2 text-xs text-slate-800 font-semibold focus:bg-white focus:border-[#002f34] outline-none cursor-pointer appearance-none"
             >
               <option value="all">All Phones</option>
               <option value="new">🟢 Brand New (Pin Pack)</option>
@@ -115,7 +115,7 @@ export default function FilterBar({ targetPath = '/shop' }: { targetPath?: strin
             <select
               value={currentBrand}
               onChange={(e) => updateParam('brand', e.target.value)}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 font-semibold focus:bg-white focus:border-emerald-500 outline-none cursor-pointer appearance-none"
+              className="w-full bg-slate-50 border border-slate-300 rounded-md px-3 py-2 text-xs text-slate-800 font-semibold focus:bg-white focus:border-[#002f34] outline-none cursor-pointer appearance-none"
             >
               <option value="all">All Brands</option>
               <option value="apple">Apple (iPhone)</option>
@@ -148,7 +148,7 @@ export default function FilterBar({ targetPath = '/shop' }: { targetPath?: strin
             <select
               value={currentPta}
               onChange={(e) => updateParam('pta', e.target.value)}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 font-semibold focus:bg-white focus:border-emerald-500 outline-none cursor-pointer appearance-none"
+              className="w-full bg-slate-50 border border-slate-300 rounded-md px-3 py-2 text-xs text-slate-800 font-semibold focus:bg-white focus:border-[#002f34] outline-none cursor-pointer appearance-none"
             >
               <option value="all">Any PTA Status</option>
               <option value="official">Official PTA Approved</option>
@@ -169,7 +169,7 @@ export default function FilterBar({ targetPath = '/shop' }: { targetPath?: strin
             <select
               value={currentBattery}
               onChange={(e) => updateParam('battery', e.target.value)}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 font-semibold focus:bg-white focus:border-emerald-500 outline-none cursor-pointer appearance-none"
+              className="w-full bg-slate-50 border border-slate-300 rounded-md px-3 py-2 text-xs text-slate-800 font-semibold focus:bg-white focus:border-[#002f34] outline-none cursor-pointer appearance-none"
             >
               <option value="all">Any Health %</option>
               <option value="95-100">95% – 100% (Mint)</option>
@@ -190,7 +190,7 @@ export default function FilterBar({ targetPath = '/shop' }: { targetPath?: strin
             <select
               value={currentStorage}
               onChange={(e) => updateParam('storage', e.target.value)}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 font-semibold focus:bg-white focus:border-emerald-500 outline-none cursor-pointer appearance-none"
+              className="w-full bg-slate-50 border border-slate-300 rounded-md px-3 py-2 text-xs text-slate-800 font-semibold focus:bg-white focus:border-[#002f34] outline-none cursor-pointer appearance-none"
             >
               <option value="all">All Capacities</option>
               <option value="64GB">64GB</option>
@@ -228,7 +228,7 @@ export default function FilterBar({ targetPath = '/shop' }: { targetPath?: strin
             step="10000"
             value={sliderMax}
             onChange={(e) => handleSliderChange(parseInt(e.target.value, 10))}
-            className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600"
+            className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#002f34]"
           />
           <span className="text-[10px] text-slate-400 font-mono">Rs. 600k+</span>
         </div>
