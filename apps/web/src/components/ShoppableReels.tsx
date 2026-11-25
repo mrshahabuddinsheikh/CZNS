@@ -95,7 +95,7 @@ export default function ShoppableReels() {
   if (!reels || reels.length === 0) return null;
 
   return (
-    <section className="max-w-[1440px] mx-auto px-3 sm:px-6 py-6 text-slate-900">
+    <section id="shoppable-reels" className="max-w-[1440px] mx-auto px-3 sm:px-6 py-6 text-slate-900 scroll-mt-20">
       {/* Header */}
       <div className="flex items-center justify-between mb-5 pb-3 border-b border-slate-200">
         <div className="flex items-center gap-2.5">

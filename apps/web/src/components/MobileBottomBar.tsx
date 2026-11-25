@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Home, MessageSquare, ShoppingBag, User, Zap } from 'lucide-react';
+import { Home, MessageSquare, ShoppingBag, Film, Zap } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 
 export default function MobileBottomBar() {
@@ -11,10 +11,21 @@ export default function MobileBottomBar() {
   const router = useRouter();
   const { totalItems, setIsCartOpen } = useCart();
 
+  const handleOpenReels = () => {
+    if (pathname === '/') {
+      const reelsEl = document.getElementById('shoppable-reels');
+      if (reelsEl) {
+        reelsEl.scrollIntoView({ behavior: 'smooth' });
+        return;
+      }
+    }
+    router.push('/#shoppable-reels');
+  };
+
   return (
     <nav
       aria-label="Mobile Navigation Bar"
-      className="lg:hidden fixed bottom-0 inset-x-0 z-40 backdrop-blur-2xl bg-white/92 border-t border-slate-200/90 shadow-[0_-8px_25px_rgba(0,0,0,0.06)] px-2 py-1.5 flex items-center justify-around text-slate-700 select-none"
+      className="md:hidden fixed bottom-0 inset-x-0 z-40 backdrop-blur-2xl bg-white/92 border-t border-slate-200/90 shadow-[0_-8px_25px_rgba(0,0,0,0.06)] px-2 py-1.5 flex items-center justify-around text-slate-700 select-none"
     >
       {/* 1. Home */}
       <Link
@@ -71,14 +82,15 @@ export default function MobileBottomBar() {
         <span className="text-[10px] tracking-tight uppercase">My Bag</span>
       </button>
 
-      {/* 5. Account / Staff */}
-      <Link
-        href="/admin/login"
-        className="flex flex-col items-center justify-center flex-1 py-1 text-center text-slate-500 hover:text-emerald-700 transition-colors"
+      {/* 5. Shoppable Reels (Replaces Account as requested) */}
+      <button
+        onClick={handleOpenReels}
+        className="flex flex-col items-center justify-center flex-1 py-1 text-center text-slate-500 hover:text-pink-600 transition-colors cursor-pointer"
+        aria-label="Watch Shoppable Reels"
       >
-        <User className="w-5 h-5 mb-0.5" />
-        <span className="text-[10px] tracking-tight uppercase">Account</span>
-      </Link>
+        <Film className="w-5 h-5 mb-0.5" />
+        <span className="text-[10px] tracking-tight uppercase font-medium">Reels</span>
+      </button>
     </nav>
   );
 }

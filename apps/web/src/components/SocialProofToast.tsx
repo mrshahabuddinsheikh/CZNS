@@ -64,11 +64,11 @@ export default function SocialProofToast() {
     <AnimatePresence>
       {visible && (
         <motion.div
-          initial={{ opacity: 0, y: 30, scale: 0.95 }}
+          initial={{ opacity: 0, y: -15, scale: 0.95 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: 20, scale: 0.95 }}
+          exit={{ opacity: 0, y: -15, scale: 0.95 }}
           transition={{ duration: 0.3 }}
-          className="fixed bottom-20 sm:bottom-6 left-3 sm:left-6 z-40 max-w-sm"
+          className="fixed top-20 left-3 right-3 sm:right-auto sm:left-4 md:top-auto md:bottom-6 md:left-6 z-40 max-w-sm"
         >
           <div className="bg-white/90 border border-slate-200/90 p-3 rounded-2xl shadow-xl backdrop-blur-xl flex items-center gap-3 text-slate-800">
             {/* Product Image */}

@@ -317,7 +317,7 @@ export default function ChatBot() {
   return (
     <>
       {/* FLOATING TRIGGER BUTTON */}
-      <div className="fixed bottom-20 right-4 sm:bottom-6 sm:right-6 z-40 flex items-center gap-2">
+      <div className="fixed bottom-20 right-3 sm:right-4 md:bottom-6 md:right-6 z-40 flex items-center gap-2">
         {/* Floating Callout Pill (Auto-highlights the 2-click buy capability, hidden on mobile) */}
         {!isOpen && hasUnread && (
           <motion.div
@@ -352,7 +352,7 @@ export default function ChatBot() {
             backgroundColor: isOpen ? '#0f172a' : 'var(--primary-color, #10b981)',
             boxShadow: 'var(--primary-glow-lg, 0 12px 32px rgba(16,185,129,0.4))',
           }}
-          className={`relative w-14 h-14 sm:w-16 sm:h-16 shrink-0 aspect-square rounded-full flex items-center justify-center p-1.5 transition-all duration-300 cursor-pointer overflow-hidden ${
+          className={`relative w-13 h-13 sm:w-14 sm:h-14 md:w-16 md:h-16 shrink-0 aspect-square rounded-full flex items-center justify-center p-1.5 transition-all duration-300 cursor-pointer overflow-hidden ${
             isOpen ? 'rotate-90' : 'group'
           }`}
           aria-label="Open CZNS Shopping Assistant"
@@ -366,7 +366,7 @@ export default function ChatBot() {
               <img
                 src="/chatbot-avatar.png"
                 alt="CZNS 3D AI Robot"
-                className="w-10 h-10 sm:w-12 sm:h-12 max-w-full max-h-full object-contain filter drop-shadow-sm group-hover:scale-105 transition-transform duration-300 select-none pointer-events-none"
+                className="w-9 h-9 sm:w-10 sm:h-10 md:w-12 md:h-12 max-w-full max-h-full object-contain filter drop-shadow-sm group-hover:scale-105 transition-transform duration-300 select-none pointer-events-none"
               />
               {/* Online Pulse Dot */}
               <span className="absolute top-0.5 right-0.5 w-3 h-3 bg-emerald-400 border-2 border-white rounded-full shadow-xs animate-pulse" />
@@ -383,7 +383,7 @@ export default function ChatBot() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 40, scale: 0.96 }}
             transition={{ duration: 0.25, ease: 'easeOut' }}
-            className="fixed inset-x-3 bottom-20 sm:bottom-24 sm:right-5 sm:left-auto sm:w-[410px] h-[580px] max-h-[82vh] z-50 flex flex-col bg-white/92 backdrop-blur-2xl border border-white/80 rounded-3xl shadow-[0_24px_65px_-12px_rgba(0,0,0,0.18)] overflow-hidden"
+            className="fixed inset-x-3 bottom-20 md:bottom-24 md:right-6 md:left-auto md:w-[410px] h-[580px] max-h-[82vh] z-50 flex flex-col bg-white/92 backdrop-blur-2xl border border-white/80 rounded-3xl shadow-[0_24px_65px_-12px_rgba(0,0,0,0.18)] overflow-hidden"
           >
             {/* Header */}
             <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-emerald-950 p-4 text-white flex items-center justify-between border-b border-white/10 shrink-0">

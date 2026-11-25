@@ -9,8 +9,6 @@ import {
   ShoppingBag,
   Sparkles,
   BatteryCharging,
-  PhoneCall,
-  MapPin,
   X,
 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
@@ -76,40 +74,7 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-40 w-full select-none">
-      {/* 1. TOP UTILITY ANNOUNCEMENT BAR */}
-      <div className="bg-[#002f34] text-white text-[11px] font-medium py-1.5 px-3 sm:px-6 border-b border-teal-900/40">
-        <div className="max-w-[1440px] mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <span className="font-extrabold tracking-wider text-[#ffce32] uppercase">
-              CZN&apos;S Certified Mobile Store
-            </span>
-            <span className="hidden sm:inline text-teal-400">•</span>
-            <span className="hidden sm:inline text-slate-200">Official PTA DIRBS Approved &amp; 100% Genuine</span>
-            <span className="hidden md:inline text-teal-400">•</span>
-            <span className="hidden md:inline text-teal-200">Star City Mall Saddar Desk, Karachi</span>
-          </div>
-
-          <div className="flex items-center gap-3 text-slate-300">
-            <span className="text-[#ffce32] font-bold">Same-Day COD</span>
-            <span>•</span>
-            <Link href="/track-order" className="hover:text-white transition-colors">
-              Track Order
-            </Link>
-            <span>•</span>
-            <a
-              href="https://wa.me/923001234567"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-emerald-300 text-emerald-400 font-bold flex items-center gap-1"
-            >
-              <PhoneCall className="w-3 h-3" />
-              <span>WhatsApp Help</span>
-            </a>
-          </div>
-        </div>
-      </div>
-
-      {/* 2. MAIN HEADER WITH FROSTED GLASS EFFECT */}
+      {/* MAIN HEADER WITH FROSTED GLASS EFFECT */}
       <div className="backdrop-blur-2xl bg-white/85 border-b border-white/60 shadow-[0_4px_30px_rgba(0,47,52,0.04)] py-3 px-3 sm:px-6 transition-all">
         <div className="max-w-[1440px] mx-auto flex items-center justify-between gap-3 sm:gap-6">
           {/* Left: Custom CZN'S Logo */}
