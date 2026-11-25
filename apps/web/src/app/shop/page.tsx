@@ -166,7 +166,7 @@ function ShopContent() {
       <div className="space-y-4">
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 text-xs text-slate-500">
-          <Link href="/" className="hover:text-emerald-600 transition-colors">Home</Link>
+          <Link href="/" className="hover:text-[#7e0119] transition-colors">Home</Link>
           <ChevronRight className="w-3 h-3 text-slate-400" />
           <span className="font-semibold text-slate-800">Shop All Smartphones</span>
         </div>
@@ -201,8 +201,8 @@ function ShopContent() {
               onClick={() => updateParam('condition', 'new')}
               className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                 condition === 'new'
-                  ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20'
-                  : 'text-emerald-700 hover:bg-white'
+                  ? 'bg-[#7e0119] text-white shadow-md shadow-[#7e0119]/20'
+                  : 'text-[#7e0119] hover:bg-white'
               }`}
             >
               <Sparkles className="w-3.5 h-3.5" />
@@ -230,7 +230,7 @@ function ShopContent() {
           onClick={() => setMobileFilterOpen(true)}
           className="lg:hidden flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-900 text-white text-xs font-bold shadow-xs"
         >
-          <SlidersHorizontal className="w-4 h-4 text-emerald-400" />
+          <SlidersHorizontal className="w-4 h-4 text-[#7e0119]" />
           <span>Filters ({hasActiveFilters ? 'Active' : 'All'})</span>
         </button>
 
@@ -239,10 +239,10 @@ function ShopContent() {
           <span className="text-xs font-bold text-slate-400 mr-1 hidden sm:inline">Active:</span>
 
           {condition !== 'all' && (
-            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-semibold">
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-rose-50 text-[#7e0119] border border-rose-200 text-xs font-semibold">
               {condition === 'new' ? 'Brand New' : '10/10 Mint Used'}
               <button onClick={() => updateParam('condition', 'all')}>
-                <X className="w-3 h-3 hover:text-emerald-900" />
+                <X className="w-3 h-3 hover:text-[#610012]" />
               </button>
             </span>
           )}
@@ -257,7 +257,7 @@ function ShopContent() {
           )}
 
           {searchParams.has('max_price') && (
-            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-semibold">
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-rose-50 text-[#7e0119] border border-rose-200 text-xs font-semibold">
               Max: {formatPKR(sliderPrice)}
               <button onClick={() => updatePriceSlider(600000)}>
                 <X className="w-3 h-3 hover:text-rose-600" />
@@ -318,7 +318,7 @@ function ShopContent() {
             <select
               value={sort}
               onChange={(e) => updateParam('sort', e.target.value)}
-              className="bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-slate-800 font-bold focus:border-emerald-500 outline-none cursor-pointer pr-7 appearance-none shadow-xs"
+              className="bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-slate-800 font-bold focus:border-[#7e0119] outline-none cursor-pointer pr-7 appearance-none shadow-xs"
             >
               <option value="popular">Most Popular</option>
               <option value="price_asc">Price: Low to High</option>
@@ -337,7 +337,7 @@ function ShopContent() {
         <aside className="hidden lg:block lg:col-span-1 bg-white/80 backdrop-blur-2xl border border-slate-200/90 rounded-3xl p-5 shadow-[0_8px_30px_rgba(0,0,0,0.03)] space-y-6 sticky top-24">
           <div className="flex items-center justify-between pb-3 border-b border-slate-100">
             <div className="flex items-center gap-2">
-              <SlidersHorizontal className="w-4 h-4 text-emerald-600" />
+              <SlidersHorizontal className="w-4 h-4 text-[#7e0119]" />
               <h2 className="text-sm font-black text-slate-900 uppercase tracking-wider">
                 Filters
               </h2>
@@ -375,7 +375,7 @@ function ShopContent() {
                   onClick={() => updateParam('brand', b.slug)}
                   className={`w-full text-left text-xs px-3 py-1.5 rounded-xl font-medium transition-colors flex items-center justify-between cursor-pointer ${
                     brand === b.slug
-                      ? 'bg-emerald-600 text-white font-bold shadow-xs'
+                      ? 'bg-[#7e0119] text-white font-bold shadow-xs'
                       : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
                   }`}
                 >
@@ -392,7 +392,7 @@ function ShopContent() {
               <h3 className="text-xs font-black text-slate-800 uppercase tracking-wider">
                 Price Range (PKR)
               </h3>
-              <span className="text-[11px] font-mono font-black text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+              <span className="text-[11px] font-mono font-black text-[#7e0119] bg-rose-50 px-2 py-0.5 rounded-full border border-rose-200">
                 {sliderPrice >= 600000 ? 'Any Price' : `Up to ${formatPKR(sliderPrice)}`}
               </span>
             </div>
@@ -407,7 +407,7 @@ function ShopContent() {
                 onChange={(e) => setSliderPrice(parseInt(e.target.value, 10))}
                 onMouseUp={(e) => updatePriceSlider(parseInt((e.target as HTMLInputElement).value, 10))}
                 onTouchEnd={(e) => updatePriceSlider(parseInt((e.target as HTMLInputElement).value, 10))}
-                className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600"
+                className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#7e0119]"
               />
               <div className="flex justify-between text-[10px] text-slate-400 font-mono">
                 <span>Rs. 10k</span>
@@ -425,7 +425,7 @@ function ShopContent() {
                   className={`p-2 rounded-xl text-[10px] font-bold transition-all text-center border cursor-pointer ${
                     sliderPrice === tier.max
                       ? 'bg-slate-900 text-white border-slate-900 shadow-sm'
-                      : 'bg-slate-50 border-slate-200 hover:border-emerald-500 hover:bg-emerald-50 text-slate-700'
+                      : 'bg-slate-50 border-slate-200 hover:border-[#7e0119] hover:bg-rose-50 text-slate-700'
                   }`}
                 >
                   {tier.label}
@@ -446,7 +446,7 @@ function ShopContent() {
                   onClick={() => updateParam('pta', opt.value)}
                   className={`w-full text-left text-xs px-3 py-1.5 rounded-xl font-medium transition-colors flex items-center justify-between cursor-pointer ${
                     pta === opt.value
-                      ? 'bg-emerald-600 text-white font-bold shadow-xs'
+                      ? 'bg-[#7e0119] text-white font-bold shadow-xs'
                       : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
                   }`}
                 >
@@ -479,7 +479,7 @@ function ShopContent() {
                   onClick={() => updateParam('storage', st)}
                   className={`py-1.5 px-2 rounded-xl text-xs font-bold border transition-colors cursor-pointer ${
                     storage === st
-                      ? 'bg-emerald-600 text-white border-emerald-600 shadow-xs'
+                      ? 'bg-[#7e0119] text-white border-[#7e0119] shadow-xs'
                       : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
                   }`}
                 >
@@ -553,7 +553,7 @@ function ShopContent() {
               </div>
               <button
                 onClick={clearAllFilters}
-                className="px-5 py-2.5 rounded-full bg-slate-900 hover:bg-emerald-600 text-white text-xs font-bold transition-colors shadow-md cursor-pointer"
+                className="px-5 py-2.5 rounded-full bg-slate-900 hover:bg-[#7e0119] text-white text-xs font-bold transition-colors shadow-md cursor-pointer"
               >
                 Reset All Filters
               </button>
@@ -617,7 +617,7 @@ function ShopContent() {
                   <div className="space-y-2">
                     <div className="flex justify-between items-center text-xs font-bold">
                       <span className="text-slate-500">Price Range</span>
-                      <span className="text-emerald-700 font-mono font-black">{formatPKR(sliderPrice)}</span>
+                      <span className="text-[#7e0119] font-mono font-black">{formatPKR(sliderPrice)}</span>
                     </div>
                     <input
                       type="range"
@@ -626,7 +626,7 @@ function ShopContent() {
                       step="10000"
                       value={sliderPrice}
                       onChange={(e) => updatePriceSlider(parseInt(e.target.value, 10))}
-                      className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600"
+                      className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#7e0119]"
                     />
                   </div>
 
@@ -687,7 +687,7 @@ function ShopContent() {
                 <div className="pt-6 border-t border-slate-100 space-y-2">
                   <button
                     onClick={() => setMobileFilterOpen(false)}
-                    className="w-full py-3 rounded-full bg-emerald-600 text-white font-bold text-xs shadow-md cursor-pointer"
+                    className="w-full py-3 rounded-full bg-[#7e0119] text-white font-bold text-xs shadow-md cursor-pointer"
                   >
                     Apply Filters ({totalCount} Phones)
                   </button>
