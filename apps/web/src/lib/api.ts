@@ -75,10 +75,10 @@ export async function apiFetch<T = any>(
 
 // Format Pakistani Rupees with comma separator (e.g., Rs. 495,000)
 export function formatPKR(amount: number | string | undefined | null): string {
-  if (amount === undefined || amount === null) return 'Rs. 0';
+  if (amount === undefined || amount === null) return 'Rs.\u00A00';
   const num = typeof amount === 'string' ? parseFloat(amount) : amount;
-  if (isNaN(num)) return 'Rs. 0';
-  return `Rs. ${num.toLocaleString('en-PK')}`;
+  if (isNaN(num)) return 'Rs.\u00A00';
+  return `Rs.\u00A0${num.toLocaleString('en-PK')}`;
 }
 
 // Generate direct WhatsApp chat URL with message
