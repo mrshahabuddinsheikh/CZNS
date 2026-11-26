@@ -17,12 +17,12 @@ import { Product } from '../lib/types';
 import { formatPKR } from '../lib/api';
 import { useCart } from '../context/CartContext';
 
-function getDisplayCondition(grade?: string, isUsed?: boolean) {
+function getDisplayCondition(grade?: string, isUsed?: boolean, hasBattery?: boolean) {
   if (!isUsed) return 'Brand New';
-  if (!grade) return '10/10 Mint';
-  if (grade.includes('10/10')) return '10/10 Mint';
-  if (grade.includes('9.5/10')) return '9.5/10 Like New';
-  if (grade.includes('9/10')) return '9/10 Good';
+  if (!grade) return hasBattery ? '10/10' : '10/10 Mint';
+  if (grade.includes('10/10')) return hasBattery ? '10/10' : '10/10 Mint';
+  if (grade.includes('9.5/10')) return hasBattery ? '9.5/10' : '9.5/10 Like New';
+  if (grade.includes('9/10')) return hasBattery ? '9/10' : '9/10 Good';
   return 'Pre-Owned';
 }
 
@@ -106,14 +106,14 @@ export default function ProductCard({ product, viewMode = 'grid' }: ProductCardP
           />
 
           {/* Clean Condition Badge */}
-          <div className="absolute top-2 left-2 z-10 pointer-events-none">
+          <div className="absolute top-2 left-2 z-10 pointer-events-none max-w-[calc(100%-36px)]">
             {isUsed ? (
-              <span className="inline-flex items-center gap-1 bg-slate-900/80 backdrop-blur-md text-white text-[9px] font-semibold px-2 py-0.5 rounded-full shadow-xs">
-                <span>{getDisplayCondition(product.condition_grade, true)}</span>
+              <span className="inline-flex items-center gap-1 bg-slate-900/80 backdrop-blur-md text-white text-[9px] font-semibold px-2 py-0.5 rounded-full shadow-xs truncate">
+                <span>{getDisplayCondition(product.condition_grade, true, Boolean(product.battery_health))}</span>
                 {product.battery_health && (
                   <>
                     <span className="opacity-40">•</span>
-                    <span className="text-emerald-300 font-bold">🔋{product.battery_health}%</span>
+                    <span className="text-emerald-300 font-bold shrink-0">🔋{product.battery_health}%</span>
                   </>
                 )}
               </span>
@@ -223,14 +223,14 @@ export default function ProductCard({ product, viewMode = 'grid' }: ProductCardP
         </Link>
 
         {/* Top-Left Unified Clean Condition Badge */}
-        <div className="absolute top-2.5 left-2.5 z-10 pointer-events-none">
+        <div className="absolute top-2.5 left-2.5 z-10 pointer-events-none max-w-[calc(100%-40px)]">
           {isUsed ? (
-            <span className="inline-flex items-center gap-1 bg-slate-900/80 backdrop-blur-md text-white text-[10px] font-semibold px-2 py-0.5 rounded-full shadow-xs">
-              <span>{getDisplayCondition(product.condition_grade, true)}</span>
+            <span className="inline-flex items-center gap-1 bg-slate-900/80 backdrop-blur-md text-white text-[10px] font-semibold px-2 py-0.5 rounded-full shadow-xs truncate">
+              <span>{getDisplayCondition(product.condition_grade, true, Boolean(product.battery_health))}</span>
               {product.battery_health && (
                 <>
                   <span className="opacity-40">•</span>
-                  <span className="text-emerald-300 font-bold">🔋{product.battery_health}%</span>
+                  <span className="text-emerald-300 font-bold shrink-0">🔋{product.battery_health}%</span>
                 </>
               )}
             </span>
