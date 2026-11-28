@@ -7,8 +7,8 @@
  */
 
 // Prevent timeout
-set_time_limit(300);
-ini_set('max_execution_time', '300');
+set_time_limit(600);
+ini_set('max_execution_time', '600');
 ignore_user_abort(true);
 
 // Deployment Security Token (shared between GitHub Actions secret and this webhook)

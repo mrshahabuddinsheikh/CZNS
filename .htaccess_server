@@ -3,21 +3,11 @@ RewriteEngine On
 RewriteRule .* - [E=noconntimeout:1,E=noabort:1]
 </IfModule>
 
-# BEGIN cPanel-generated php ini directives, do not edit
-<IfModule php8_module>
-   php_value error_log "/home/newquett/logs/php.error.log"
-   php_flag log_errors On
-</IfModule>
-<IfModule lsapi_module>
-   php_value error_log "/home/newquett/logs/php.error.log"
-   php_flag log_errors On
-</IfModule>
-# END cPanel-generated php ini directives, do not edit
-
 # DO NOT REMOVE. CLOUDLINUX PASSENGER CONFIGURATION BEGIN
-PassengerAppRoot "/home/newquett/czns.newquettaautos.com"
+PassengerAppRoot "/home/develope/czns.11developer.com"
 PassengerBaseURI "/"
-PassengerNodejs "/home/newquett/nodevenv/czns.newquettaautos.com/22/bin/node"
+PassengerNodejs "/home/develope/nodevenv/czns.11developer.com/22/bin/node"
 PassengerAppType node
 PassengerStartupFile server.js
+PassengerAppLogFile "/home/develope/czns.11developer.com/passenger.log"
 # DO NOT REMOVE. CLOUDLINUX PASSENGER CONFIGURATION END
