@@ -88,9 +88,9 @@ jobs:
 
       - name: Trigger cPanel Deployment Webhook
         run: |
-          echo "🚀 Triggering deployment webhook on czns.newquettaautos.com..."
+          echo "🚀 Triggering deployment webhook on czns.11developer.com..."
           DEPLOY_RESPONSE=$(curl -s --retry 3 --retry-delay 5 --max-time 180 -w "\nHTTP_STATUS:%{http_code}" -X POST \
-            "https://czns.newquettaautos.com/deploy.php?secret=czns_deploy_key_2026_a9b8c7")
+            "http://czns.11developer.com/deploy.php?secret=czns_deploy_key_2026_a9b8c7")
           
           echo "Server Response:"
           echo "$DEPLOY_RESPONSE"
@@ -106,5 +106,5 @@ jobs:
         run: |
           echo "🔍 Verifying live storefront health..."
           sleep 5
-          curl -f -s -I "https://czns.newquettaautos.com/" || true
+          curl -f -s -I "http://czns.11developer.com/" || true
           echo "✅ Pipeline completed successfully!"
