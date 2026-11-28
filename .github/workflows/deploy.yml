@@ -70,6 +70,13 @@ jobs:
             cp apps/web/next.config.js release_staging/apps/web/
           fi
 
+          # Prune devDependencies and bundle production node_modules
+          # Server never needs to run npm install, preventing CloudLinux process limits!
+          echo "📦 Packaging production node_modules..."
+          npm prune --omit=dev
+          cp -r node_modules release_staging/
+          rm -rf release_staging/node_modules/.cache
+
           cd release_staging
           tar -czf ../czns-release.tar.gz .
           cd ..
@@ -106,5 +113,5 @@ jobs:
         run: |
           echo "🔍 Verifying live storefront health..."
           sleep 5
-          curl -f -s -I "http://czns.11developer.com/" || true
+          curl -f -s -I --max-time 15 "http://czns.11developer.com/" || true
           echo "✅ Pipeline completed successfully!"
